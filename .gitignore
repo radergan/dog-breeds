@@ -1,0 +1,55 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Database (keep source JSON, but .db file is too large for git)
+*.db
+*.db-journal
+
+# Kaggle cache
+.kaggle/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+*.log
+
+# Backup files
+*.bak
+*.backup
+*_backup.*
+
+# Environment
+.env
+.env.local
+
+# Don't commit intermediate files (regenerate from database)
+# dog_breeds_kaggle.json  # Keep this one as source
+# dog_breeds_with_uuids.json  # Optional: can regenerate
