@@ -34,12 +34,12 @@
                     </a>
                     <ul class="menu">
                         <li class="menu-item">
-                            <a href="../profile.html">
+                            <a href="profile.html">
                                 <i class="icon icon-people"></i> Profile
                             </a>
                         </li>
                         <li class="menu-item">
-                            <a href="../settings.html">
+                            <a href="settings.html">
                                 <i class="icon icon-edit"></i> Settings
                             </a>
                         </li>
@@ -362,58 +362,6 @@
         </div>
     </div>
 
-    <script>
-        // Image gallery navigation
-        let currentImageIndex = 0;
-        const images = document.querySelectorAll('.breed-image');
-        const totalImages = images.length;
-        
-        function changeImage(direction) {
-            if (totalImages <= 1) return;
-            
-            images[currentImageIndex].classList.remove('active');
-            currentImageIndex = (currentImageIndex + direction + totalImages) % totalImages;
-            images[currentImageIndex].classList.add('active');
-            
-            document.getElementById('image-indicator').textContent = `${currentImageIndex + 1} of ${totalImages}`;
-        }
-        
-        // Sidebar navigation for breed pages
-        document.addEventListener('DOMContentLoaded', function() {
-            // "View all breeds" button
-            const viewAllBtn = document.getElementById('all-primates-btn');
-            if (viewAllBtn) {
-                viewAllBtn.style.cursor = 'pointer';
-            }
-            
-            // Size filter items - navigate to index with size filter
-            document.querySelectorAll('.dog-size-item').forEach(item => {
-                item.style.cursor = 'pointer';
-                item.addEventListener('click', function() {
-                    const size = this.getAttribute('data-value');
-                    window.location.href = `../index.html#size-${size}`;
-                });
-            });
-            
-            // Group filter items - navigate to index with group filter
-            document.querySelectorAll('.subfamily-item[data-filter="group"]').forEach(item => {
-                item.style.cursor = 'pointer';
-                item.addEventListener('click', function() {
-                    const group = this.getAttribute('data-value');
-                    window.location.href = `../index.html#group-${group}`;
-                });
-            });
-            
-            // Trait checkboxes - navigate to index
-            document.querySelectorAll('.filter-checkbox').forEach(checkbox => {
-                checkbox.addEventListener('change', function() {
-                    window.location.href = '../index.html';
-                });
-            });
-        });
-    </script>
-    <script src="../auth.js"></script>
-
     <!-- Login Modal -->
     <div class="modal auth-modal" id="login-modal">
         <a href="#" class="modal-overlay" aria-label="Close"></a>
@@ -478,6 +426,58 @@
             </div>
         </div>
     </div>
+
+    <script src="auth.js"></script>
+    <script>
+        // Image gallery navigation
+        let currentImageIndex = 0;
+        const images = document.querySelectorAll('.breed-image');
+        const totalImages = images.length;
+        
+        function changeImage(direction) {
+            if (totalImages <= 1) return;
+            
+            images[currentImageIndex].classList.remove('active');
+            currentImageIndex = (currentImageIndex + direction + totalImages) % totalImages;
+            images[currentImageIndex].classList.add('active');
+            
+            document.getElementById('image-indicator').textContent = `${currentImageIndex + 1} of ${totalImages}`;
+        }
+        
+        // Sidebar navigation for breed pages
+        document.addEventListener('DOMContentLoaded', function() {
+            // "View all breeds" button
+            const viewAllBtn = document.getElementById('all-primates-btn');
+            if (viewAllBtn) {
+                viewAllBtn.style.cursor = 'pointer';
+            }
+            
+            // Size filter items - navigate to index with size filter
+            document.querySelectorAll('.dog-size-item').forEach(item => {
+                item.style.cursor = 'pointer';
+                item.addEventListener('click', function() {
+                    const size = this.getAttribute('data-value');
+                    window.location.href = `../index.html#size-${size}`;
+                });
+            });
+            
+            // Group filter items - navigate to index with group filter
+            document.querySelectorAll('.subfamily-item[data-filter="group"]').forEach(item => {
+                item.style.cursor = 'pointer';
+                item.addEventListener('click', function() {
+                    const group = this.getAttribute('data-value');
+                    window.location.href = `../index.html#group-${group}`;
+                });
+            });
+            
+            // Trait checkboxes - navigate to index
+            document.querySelectorAll('.filter-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    window.location.href = '../index.html';
+                });
+            });
+        });
+    </script>
     
 </body>
 </html>
