@@ -1114,6 +1114,7 @@ body.modal-open::before {
 .auth-modal .modal-header {
     padding: 2rem 2rem 1.5rem 2rem;
     border-bottom: none;
+    background: #ffffff;
     display: flex;
     align-items: center;
     justify-content: space-between;
