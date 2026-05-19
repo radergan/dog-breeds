@@ -289,6 +289,111 @@ header {
     border-bottom: 2px solid #E8E6E3;
     gap: 20px;
 }
+.preview-header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.view-toggle {
+    display: flex;
+    gap: 8px;
+}
+.view-btn {
+    padding: 8px 16px;
+    border: 1px solid #d0d0d0;
+    background: white;
+    color: #666;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+.view-btn:hover {
+    background: #f5f5f5;
+}
+.view-btn.active {
+    background: #5755d9;
+    color: white;
+    border-color: #5755d9;
+}
+.preview-list {
+    margin-bottom: 20px;
+}
+.breed-list-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 16px;
+    border-bottom: 1px solid #e0e0e0;
+    background: white;
+    transition: background 0.2s;
+    text-decoration: none;
+    color: inherit;
+}
+.breed-list-item:hover {
+    background: #f9f9f9;
+}
+.breed-list-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+    background: #f0f0f0;
+    flex-shrink: 0;
+}
+.breed-list-content {
+    flex: 1;
+    min-width: 0;
+}
+.breed-list-group {
+    background: #5755d9;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 500;
+    display: inline-block;
+    margin-bottom: 6px;
+}
+.breed-list-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: #302f79;
+    margin-bottom: 4px;
+}
+.breed-list-temperament {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 8px;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.breed-list-meta {
+    display: flex;
+    gap: 16px;
+    font-size: 13px;
+    color: #888;
+}
+.breed-list-actions {
+    flex-shrink: 0;
+}
+.breed-list-link {
+    display: inline-block;
+    background: #5755d9;
+    color: white;
+    padding: 8px 20px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+.breed-list-link:hover {
+    background: #302f79;
+}
 .preview-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));

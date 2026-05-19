@@ -15,9 +15,47 @@ const searchInput = document.getElementById('search-input');
 const speciesCount = document.getElementById('species-count');
 const previewSection = document.getElementById('preview-section');
 const previewGrid = document.getElementById('preview-grid');
+const previewList = document.getElementById('preview-list');
 const previewTitle = document.getElementById('preview-title');
 const breadcrumb = document.getElementById('breadcrumb');
 const breadcrumbCurrent = document.getElementById('breadcrumb-current');
+
+// View toggle functionality for breeds
+const breedListViewBtn = document.getElementById('breed-list-view-btn');
+const breedGalleryViewBtn = document.getElementById('breed-gallery-view-btn');
+
+// Load saved view preference (default: gallery for breeds)
+let currentBreedView = localStorage.getItem('breedView') || 'gallery';
+
+function setBreedView(view) {
+    currentBreedView = view;
+    localStorage.setItem('breedView', view);
+    
+    if (view === 'list') {
+        if (previewGrid) previewGrid.style.display = 'none';
+        if (previewList) previewList.style.display = 'block';
+        if (breedListViewBtn) breedListViewBtn.classList.add('active');
+        if (breedGalleryViewBtn) breedGalleryViewBtn.classList.remove('active');
+    } else {
+        if (previewGrid) previewGrid.style.display = 'grid';
+        if (previewList) previewList.style.display = 'none';
+        if (breedListViewBtn) breedListViewBtn.classList.remove('active');
+        if (breedGalleryViewBtn) breedGalleryViewBtn.classList.add('active');
+    }
+    
+    // Re-render to update the view
+    renderPage();
+}
+
+if (breedListViewBtn) {
+    breedListViewBtn.addEventListener('click', () => setBreedView('list'));
+}
+if (breedGalleryViewBtn) {
+    breedGalleryViewBtn.addEventListener('click', () => setBreedView('gallery'));
+}
+
+// Set initial view
+setBreedView(currentBreedView);
 
 // Update stats (if element exists)
 if (speciesCount) {
@@ -188,15 +226,41 @@ function showFiltered(filter, value) {
 
 // Render preview cards
 function renderPage() {
-    // Render all preview cards as links to individual breed pages
-    previewGrid.innerHTML = currentFilterDogs.map(dog => {
-        const slug = createSlug(dog.name);
-        return `
-        <a href="breeds/${slug}.html" class="preview-card">
-            <img src="${dog.image}" alt="${dog.name}" class="preview-image">
-            <div class="preview-name">${dog.name}</div>
-        </a>`;
-    }).join('');
+    // Render gallery view
+    if (previewGrid) {
+        previewGrid.innerHTML = currentFilterDogs.map(dog => {
+            const slug = createSlug(dog.name);
+            return `
+            <a href="breeds/${slug}.html" class="preview-card">
+                <img src="${dog.image}" alt="${dog.name}" class="preview-image">
+                <div class="preview-name">${dog.name}</div>
+            </a>`;
+        }).join('');
+    }
+    
+    // Render list view
+    if (previewList) {
+        previewList.innerHTML = currentFilterDogs.map(dog => {
+            const slug = createSlug(dog.name);
+            return `
+            <a href="breeds/${slug}.html" class="breed-list-item">
+                <img src="${dog.image}" alt="${dog.name}" class="breed-list-image">
+                <div class="breed-list-content">
+                    <span class="breed-list-group">${dog.groupDisplay}</span>
+                    <div class="breed-list-name">${dog.name}</div>
+                    <div class="breed-list-temperament">${dog.temperament}</div>
+                    <div class="breed-list-meta">
+                        <span>Size: ${dog.size}</span>
+                        <span>Weight: ${dog.weight}</span>
+                        <span>Shedding: ${dog.shedding}</span>
+                    </div>
+                </div>
+                <div class="breed-list-actions">
+                    <span class="breed-list-link">View Details</span>
+                </div>
+            </a>`;
+        }).join('');
+    }
 }
 
 

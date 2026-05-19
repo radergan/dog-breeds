@@ -159,13 +159,22 @@
         <div class="preview-section" id="preview-section">
             <div class="preview-header">
                 <h3 id="preview-title">Examples from this group</h3>
-                <div class="inline-search">
-                    <input class="form-input" type="text" id="search-input" placeholder="Search dog breeds...">
-                    <button class="btn btn-primary" id="search-btn">Search</button>
+                <div class="preview-header-right">
+                    <div class="view-toggle">
+                        <button class="view-btn" id="breed-list-view-btn" data-view="list">☰ List</button>
+                        <button class="view-btn active" id="breed-gallery-view-btn" data-view="gallery">⊞ Gallery</button>
+                    </div>
+                    <div class="inline-search">
+                        <input class="form-input" type="text" id="search-input" placeholder="Search dog breeds...">
+                        <button class="btn btn-primary" id="search-btn">Search</button>
+                    </div>
                 </div>
             </div>
             <div class="preview-grid" id="preview-grid">
                 <!-- Preview cards will be loaded here -->
+            </div>
+            <div class="preview-list" id="preview-list" style="display: none;">
+                <!-- List view will be loaded here -->
             </div>
         </div>
         </main>
