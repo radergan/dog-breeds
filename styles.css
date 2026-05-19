@@ -333,7 +333,13 @@ header {
 }
 .breed-list-item:hover {
     background: #f9f9f9;
+    text-decoration: none;
 }
+
+.breed-list-item:hover .breed-list-name {
+    text-decoration: underline;
+}
+
 .breed-list-image {
     width: 80px;
     height: 80px;
@@ -721,17 +727,17 @@ header {
 }
 
 .chip {
-    background: #5755d9;
-    border: 1px solid #302f79;
-    color: #fff;
-    padding: 18px;
-    border-radius: 1rem;
-    font-size: 13px;
-    font-weight: 500;
+background: #f0f0f0;
+  border: 0;
+  color: #595959;
+  padding: 18px;
+  border-radius: 0;
+  font-size: 13px;
+  font-weight: 500;
 }
 
 .temperament-chips {
-    margin-top: 1rem;
+    margin: 4px 4px 4px 0px;
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
