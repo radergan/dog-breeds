@@ -1071,6 +1071,7 @@ body.modal-open::before {
 }
 
 .auth-modal .modal-container {
+    max-width: 420px;
     animation: modal-slide-in 0.25s ease-out;
 }
 
