@@ -142,7 +142,7 @@ function setupModalHandlers() {
     }
     
     // Close modals
-    document.querySelectorAll('.modal-close, .modal-overlay').forEach(el => {
+    document.querySelectorAll('.modal .btn-clear, .modal-overlay').forEach(el => {
         el.addEventListener('click', function(e) {
             e.preventDefault();
             closeModal(this.closest('.modal').id);
