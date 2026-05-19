@@ -528,6 +528,17 @@ header {
 .modal.active .modal-container {
     animation: slide-in-right 0.3s ease 1;
 }
+
+/* Override for auth modals - centered instead of right-aligned */
+.auth-modal.active {
+    justify-content: center;
+    align-items: center;
+}
+
+.auth-modal.active .modal-container {
+    animation: modal-slide-in 0.2s ease-out;
+}
+
 @keyframes slide-in-right {
     from { transform: translateX(100%); }
     to { transform: translateX(0); }
@@ -1035,8 +1046,29 @@ h3 {
 .blog-item-link{color:white!important;text-decoration:none;}
 
 /* Auth Modal Styles */
-.modal.active .modal-overlay {
-    background: rgba(247, 248, 249, 0.75);
+.auth-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 400;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-modal.active {
+    display: flex;
+}
+
+.auth-modal .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
 }
@@ -1048,7 +1080,7 @@ body.modal-open::before {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(247, 248, 249, 0.75);
+    background: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     z-index: 399;
@@ -1056,12 +1088,35 @@ body.modal-open::before {
 }
 
 .auth-modal .modal-container {
-    max-width: 420px;
-    padding: 2rem;
+    position: relative;
+    z-index: 401;
+    max-width: 450px;
+    width: 90%;
+    max-height: 90vh;
+    overflow: hidden;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: modal-slide-in 0.2s ease-out;
+}
+
+@keyframes modal-slide-in {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .auth-modal .modal-header {
-    margin-bottom: 1.5rem;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid #e5e5e5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .auth-modal .modal-title {
@@ -1069,6 +1124,31 @@ body.modal-open::before {
     font-weight: 600;
     color: #302f79;
     margin: 0;
+}
+
+.auth-modal .modal-close {
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    line-height: 1;
+    color: #999;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-modal .modal-close:hover {
+    color: #333;
+}
+
+.auth-modal .modal-body {
+    padding: 2rem;
+    max-height: calc(90vh - 180px);
+    overflow-y: auto;
 }
 
 .auth-modal .form-group {
@@ -1080,25 +1160,27 @@ body.modal-open::before {
     margin-bottom: 0.4rem;
     font-weight: 500;
     color: #50596c;
+    font-size: 14px;
 }
 
 .auth-modal .form-input {
     width: 100%;
-    padding: 0.6rem 0.8rem;
+    padding: 0.65rem 0.9rem;
     border: 1px solid #d1d5db;
-    border-radius: 0.25rem;
+    border-radius: 4px;
     font-size: 14px;
+    transition: border-color 0.15s ease;
 }
 
 .auth-modal .form-input:focus {
     border-color: #5755d9;
     outline: none;
-    box-shadow: 0 0 0 2px rgba(87, 85, 217, 0.1);
+    box-shadow: 0 0 0 3px rgba(87, 85, 217, 0.1);
 }
 
 .auth-modal .form-hint {
     display: block;
-    margin-top: 0.3rem;
+    margin-top: 0.4rem;
     font-size: 12px;
     color: #9ca3af;
 }
@@ -1108,17 +1190,18 @@ body.modal-open::before {
     background: #fee;
     border: 1px solid #fcc;
     color: #c33;
-    padding: 0.6rem 0.8rem;
-    border-radius: 0.25rem;
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
     font-size: 13px;
-    margin-bottom: 1rem;
+    margin-bottom: 1.2rem;
 }
 
 .auth-modal .btn-primary {
     width: 100%;
-    padding: 0.65rem 1rem;
-    font-size: 14px;
+    padding: 0.75rem 1rem;
+    font-size: 15px;
     font-weight: 500;
+    margin-top: 0.5rem;
 }
 
 .auth-modal .modal-footer {
