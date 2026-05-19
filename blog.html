@@ -284,7 +284,7 @@
                     <input type="checkbox" id="accordion-2" name="accordion-checkbox" checked>
                     <label class="accordion-header" for="accordion-2">Popular Tags</label>
                     <div class="accordion-body">
-                        <div id="tags-sidebar" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                        <div id="tags-sidebar" style="padding:12px;display: flex; flex-wrap: wrap; gap: 8px;">
                             <p style="color: #888; font-size: 13px; padding: 8px 0;">No tags yet</p>
                         </div>
                     </div>
@@ -476,7 +476,7 @@
                 categoriesContainer.innerHTML = Object.entries(categoryCount)
                     .sort(([a], [b]) => a.localeCompare(b))
                     .map(([category, count]) => `
-                        <div class="subfamily-item" style="cursor: pointer; padding: 8px 0;">
+                        <div class="subfamily-item" style="cursor: pointer; padding: 12px;">
                             <div class="subfamily-name">${category}</div>
                             <div class="subfamily-desc">${count} post${count !== 1 ? 's' : ''}</div>
                         </div>
