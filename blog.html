@@ -10,31 +10,43 @@
     <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-icons.min.css">
     <link rel="stylesheet" href="styles.css">
     <style>
-        .blog-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 20px;
+        #recent-posts-sidebar .subfamily-item:hover,
+        #categories-sidebar .subfamily-item:hover {
+            background: #f5f5f5;
+            border-radius: 4px;
+        }
+        
+        #recent-posts-sidebar .subfamily-item {
+            transition: background 0.2s;
+        }
+        
+        #categories-sidebar .subfamily-item {
+            transition: background 0.2s;
+        }
+        
+        #tags-sidebar .chip:hover {
+            background: #302f79;
+            transform: translateY(-1px);
         }
         
         .blog-header {
-            text-align: center;
-            margin-bottom: 60px;
+            margin-bottom: 40px;
         }
         
         .blog-header h1 {
-            font-size: 48px;
+            font-size: 36px;
             color: #302f79;
             margin-bottom: 10px;
         }
         
         .blog-header p {
-            font-size: 18px;
+            font-size: 16px;
             color: #666;
         }
         
         .blog-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 30px;
             margin-bottom: 40px;
         }
@@ -171,20 +183,56 @@
         </div>
     </nav>
 
-    <div class="blog-container">
-        <div class="blog-header">
-            <h1>Blog</h1>
-            <p>Dog care tips, breed guides, training advice, and more</p>
-        </div>
+    <div class="main-layout">
+        <aside class="sidebar">
+            <div class="side-nav">
+                <div class="accordion">
+                    <input type="checkbox" id="accordion-0" name="accordion-checkbox" checked>
+                    <label class="accordion-header" for="accordion-0">Recent Posts</label>
+                    <div class="accordion-body">
+                        <div id="recent-posts-sidebar">
+                            <p style="color: #888; font-size: 13px; padding: 8px 0;">No posts yet</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion">
+                    <input type="checkbox" id="accordion-1" name="accordion-checkbox" checked>
+                    <label class="accordion-header" for="accordion-1">Categories</label>
+                    <div class="accordion-body">
+                        <div id="categories-sidebar">
+                            <p style="color: #888; font-size: 13px; padding: 8px 0;">No categories yet</p>
+                        </div>
+                    </div>
+                </div>
 
-        <div class="blog-grid" id="blog-grid">
-            <!-- Blog posts will be inserted here by JavaScript -->
-        </div>
-        
-        <div class="no-posts" id="no-posts" style="display: none;">
-            <h2>No posts yet</h2>
-            <p>Check back soon for dog care tips and breed guides!</p>
-        </div>
+                <div class="accordion">
+                    <input type="checkbox" id="accordion-2" name="accordion-checkbox" checked>
+                    <label class="accordion-header" for="accordion-2">Popular Tags</label>
+                    <div class="accordion-body">
+                        <div id="tags-sidebar" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                            <p style="color: #888; font-size: 13px; padding: 8px 0;">No tags yet</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="blog-header">
+                <h1>Blog</h1>
+                <p>Dog care tips, breed guides, training advice, and more</p>
+            </div>
+
+            <div class="blog-grid" id="blog-grid">
+                <!-- Blog posts will be inserted here by JavaScript -->
+            </div>
+            
+            <div class="no-posts" id="no-posts" style="display: none;">
+                <h2>No posts yet</h2>
+                <p>Check back soon for dog care tips and breed guides!</p>
+            </div>
+        </main>
     </div>
 
     <script src="blog-posts.js"></script>
@@ -228,6 +276,60 @@
                 
                 blogGrid.appendChild(card);
             });
+            
+            // Populate sidebar with blog data
+            populateSidebar();
+        }
+        
+        function populateSidebar() {
+            // Recent Posts (last 5)
+            const recentPostsContainer = document.getElementById('recent-posts-sidebar');
+            if (blogPosts.length > 0) {
+                const recentPosts = blogPosts.slice(0, 5);
+                recentPostsContainer.innerHTML = recentPosts.map(post => `
+                    <div class="subfamily-item" style="cursor: pointer; padding: 8px 0;" onclick="window.location.href='blog/${post.slug}.html'">
+                        <div class="subfamily-name" style="font-size: 14px; color: #302f79;">${post.title}</div>
+                        <div class="subfamily-desc" style="font-size: 12px;">${post.publishedDate}</div>
+                    </div>
+                `).join('');
+            }
+            
+            // Categories
+            const categoriesContainer = document.getElementById('categories-sidebar');
+            const categoryCount = {};
+            blogPosts.forEach(post => {
+                if (post.category) {
+                    categoryCount[post.category] = (categoryCount[post.category] || 0) + 1;
+                }
+            });
+            
+            if (Object.keys(categoryCount).length > 0) {
+                categoriesContainer.innerHTML = Object.entries(categoryCount)
+                    .sort(([a], [b]) => a.localeCompare(b))
+                    .map(([category, count]) => `
+                        <div class="subfamily-item" style="cursor: pointer; padding: 8px 0;">
+                            <div class="subfamily-name">${category}</div>
+                            <div class="subfamily-desc">${count} post${count !== 1 ? 's' : ''}</div>
+                        </div>
+                    `).join('');
+            }
+            
+            // Tags
+            const tagsContainer = document.getElementById('tags-sidebar');
+            const allTags = new Set();
+            blogPosts.forEach(post => {
+                if (post.tags) {
+                    post.tags.split(',').forEach(tag => allTags.add(tag.trim()));
+                }
+            });
+            
+            if (allTags.size > 0) {
+                tagsContainer.innerHTML = Array.from(allTags)
+                    .sort()
+                    .map(tag => `
+                        <span class="chip" style="font-size: 11px; padding: 4px 10px; cursor: pointer;">${tag}</span>
+                    `).join('');
+            }
         }
     </script>
 </body>
