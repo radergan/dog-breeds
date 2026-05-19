@@ -19,7 +19,7 @@ const blogPosts = [
     "id": 2,
     "slug": "irish-setter-personality",
     "title": "The Irish Setter Personality: Understanding Your Redhead's Unique Temperament",
-    "excerpt": "Irish Setters exhibit distinct behavioral traits including high energy levels, variable temperament, clear emotional responses, and strong exercise requirements. Understanding these characteristics is essential for potential owners.",
+    "excerpt": "Irish Setters are high-energy sporting dogs with distinct personality traits. Their behavior reflects their hunting heritage, and understanding their temperament is crucial for anyone considering this breed.",
     "featuredImage": "",
     "publishedDate": "2026-05-19",
     "category": "Breeds",
