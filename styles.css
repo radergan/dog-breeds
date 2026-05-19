@@ -1013,6 +1013,105 @@ background: #f0f0f0;
 
 .info-label {
     font-weight: 600;
+}
+
+/* Community Gallery Styles */
+.community-gallery {
+    margin-top: 60px;
+    padding: 40px 32px;
+    border-top: 2px solid #e2e8f0;
+    background: #fafbfc;
+}
+
+.community-gallery h2 {
+    text-align: center;
+    color: #2d3748;
+    margin-bottom: 8px;
+    font-size: 1.75rem;
+}
+
+.gallery-subtitle {
+    text-align: center;
+    color: #718096;
+    margin-bottom: 32px;
+}
+
+.community-dogs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.loading-community {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px;
+    color: #718096;
+}
+
+.empty-community {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px;
+    color: #718096;
+}
+
+.community-dog-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+}
+
+.community-dog-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.community-dog-photo {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    background: #f7f8f9;
+}
+
+.community-dog-info {
+    padding: 16px;
+}
+
+.community-dog-name {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin: 0 0 4px 0;
+}
+
+.community-dog-owner {
+    font-size: 0.85rem;
+    color: #718096;
+    margin: 0 0 8px 0;
+}
+
+.community-dog-comment {
+    font-size: 0.9rem;
+    color: #4a5568;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.submit-dog-cta {
+    text-align: center;
+    padding: 32px;
+    background: #f7fafc;
+    border-radius: 8px;
+}
+
+.submit-dog-cta p {
+    margin: 0;
+    color: #4a5568;
+    font-size: 1rem;
+}
     color: #5a5a5a;
     font-size: 14px;
 }
