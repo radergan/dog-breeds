@@ -44,105 +44,103 @@
             color: #666;
         }
         
-        .blog-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 30px;
+        .blog-list {
             margin-bottom: 40px;
         }
         
-        .blog-card {
+        .blog-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 16px;
+            border-bottom: 1px solid #e0e0e0;
             background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: flex;
-            flex-direction: column;
+            transition: background 0.2s;
         }
         
-        .blog-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        .blog-item:hover {
+            background: #f9f9f9;
         }
         
-        .blog-card-image {
-            width: 100%;
-            height: 220px;
+        .blog-item-image {
+            width: 80px;
+            height: 80px;
             object-fit: cover;
+            border-radius: 4px;
             background: #f0f0f0;
+            flex-shrink: 0;
         }
         
-        .blog-card-content {
-            padding: 24px;
+        .blog-item-content {
             flex: 1;
-            display: flex;
-            flex-direction: column;
+            min-width: 0;
         }
         
-        .blog-card-meta {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 12px;
-            font-size: 13px;
-            color: #888;
-        }
-        
-        .blog-card-category {
+        .blog-item-category {
             background: #5755d9;
             color: white;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 12px;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 11px;
             font-weight: 500;
+            display: inline-block;
+            margin-bottom: 6px;
         }
         
-        .blog-card-title {
-            font-size: 22px;
-            font-weight: bold;
+        .blog-item-title {
+            font-size: 18px;
+            font-weight: 600;
             color: #302f79;
-            margin-bottom: 12px;
-            line-height: 1.3;
+            margin-bottom: 4px;
         }
         
-        .blog-card-title a {
+        .blog-item-title a {
             color: inherit;
             text-decoration: none;
         }
         
-        .blog-card-title a:hover {
+        .blog-item-title a:hover {
             color: #5755d9;
         }
         
-        .blog-card-excerpt {
+        .blog-item-excerpt {
+            font-size: 14px;
             color: #666;
-            line-height: 1.6;
-            margin-bottom: 16px;
-            flex: 1;
+            margin-bottom: 8px;
+            line-height: 1.4;
         }
         
-        .blog-card-footer {
+        .blog-item-meta {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 16px;
-            border-top: 1px solid #eee;
-        }
-        
-        .blog-card-date {
+            gap: 16px;
             font-size: 13px;
             color: #888;
         }
         
-        .blog-card-link {
-            color: #5755d9;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 14px;
+        .blog-item-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
         
-        .blog-card-link:hover {
-            color: #302f79;
+        .blog-item-actions {
+            flex-shrink: 0;
+        }
+        
+        .blog-item-link {
+            display: inline-block;
+            background: #5755d9;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+        
+        .blog-item-link:hover {
+            background: #302f79;
         }
         
         .no-posts {
@@ -224,7 +222,7 @@
                 <p>Dog care tips, breed guides, training advice, and more</p>
             </div>
 
-            <div class="blog-grid" id="blog-grid">
+            <div class="blog-list" id="blog-grid">
                 <!-- Blog posts will be inserted here by JavaScript -->
             </div>
             
@@ -246,35 +244,41 @@
             noPosts.style.display = 'block';
         } else {
             blogPosts.forEach(post => {
-                const card = document.createElement('div');
-                card.className = 'blog-card';
+                const item = document.createElement('div');
+                item.className = 'blog-item';
                 
                 const imageHtml = post.featuredImage 
-                    ? `<img src="${post.featuredImage}" alt="${post.title}" class="blog-card-image">`
-                    : '<div class="blog-card-image" style="background: linear-gradient(135deg, #5755d9 0%, #302f79 100%);"></div>';
+                    ? `<img src="${post.featuredImage}" alt="${post.title}" class="blog-item-image">`
+                    : '<div class="blog-item-image" style="background: linear-gradient(135deg, #5755d9 0%, #302f79 100%);"></div>';
                 
                 const categoryHtml = post.category 
-                    ? `<span class="blog-card-category">${post.category}</span>`
+                    ? `<span class="blog-item-category">${post.category}</span>`
                     : '';
                 
-                card.innerHTML = `
+                // Generate random engagement numbers for display (likes/shares)
+                const likes = Math.floor(Math.random() * 50) + 5;
+                const shares = Math.floor(Math.random() * 20) + 2;
+                
+                item.innerHTML = `
                     ${imageHtml}
-                    <div class="blog-card-content">
-                        <div class="blog-card-meta">
-                            ${categoryHtml}
-                            <span class="blog-card-date">${post.publishedDate}</span>
-                        </div>
-                        <h2 class="blog-card-title">
+                    <div class="blog-item-content">
+                        ${categoryHtml}
+                        <h2 class="blog-item-title">
                             <a href="blog/${post.slug}.html">${post.title}</a>
                         </h2>
-                        <div class="blog-card-excerpt">${post.excerpt || ''}</div>
-                        <div class="blog-card-footer">
-                            <a href="blog/${post.slug}.html" class="blog-card-link">Read more →</a>
+                        <div class="blog-item-excerpt">${post.excerpt || ''}</div>
+                        <div class="blog-item-meta">
+                            <span class="blog-item-meta-item">📅 ${post.publishedDate}</span>
+                            <span class="blog-item-meta-item">❤ ${likes} likes</span>
+                            <span class="blog-item-meta-item">↗ ${shares} shares</span>
                         </div>
+                    </div>
+                    <div class="blog-item-actions">
+                        <a href="blog/${post.slug}.html" class="blog-item-link">Read Article</a>
                     </div>
                 `;
                 
-                blogGrid.appendChild(card);
+                blogGrid.appendChild(item);
             });
             
             // Populate sidebar with blog data
@@ -318,7 +322,7 @@
             const tagsContainer = document.getElementById('tags-sidebar');
             const allTags = new Set();
             blogPosts.forEach(post => {
-                if (post.tags) {
+                if (post.tags && typeof post.tags === 'string') {
                     post.tags.split(',').forEach(tag => allTags.add(tag.trim()));
                 }
             });
