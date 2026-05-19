@@ -14,5 +14,20 @@ const blogPosts = [
       " veterinary care",
       " first aid"
     ]
+  },
+  {
+    "id": 2,
+    "slug": "irish-setter-personality",
+    "title": "The Irish Setter Personality: Understanding Your Redhead's Unique Temperament",
+    "excerpt": "Irish Setters are known for their stunning red coats, but their personalities are equally vibrant. Learn about the four key aspects that make each setter unique, from their joyful nature to their favorite activities.",
+    "featuredImage": "",
+    "publishedDate": "2026-05-19",
+    "category": "Breeds",
+    "tags": [
+      "irish setter",
+      " personality",
+      " temperament",
+      " breed traits"
+    ]
   }
 ];

@@ -456,7 +456,7 @@
             if (blogPosts.length > 0) {
                 const recentPosts = blogPosts.slice(0, 5);
                 recentPostsContainer.innerHTML = recentPosts.map(post => `
-                    <div class="subfamily-item" style="cursor: pointer; padding: 8px 0;" onclick="window.location.href='blog/${post.slug}.html'">
+                    <div class="subfamily-item" style="cursor: pointer; padding: 12px;" onclick="window.location.href='blog/${post.slug}.html'">
                         <div class="subfamily-name" style="font-size: 14px; color: #302f79;">${post.title}</div>
                         <div class="subfamily-desc" style="font-size: 12px;">${post.publishedDate}</div>
                     </div>
@@ -548,7 +548,7 @@
                         </div>
                     </div>
                     <div class="blog-item-actions">
-                        <a href="blog/${post.slug}.html" class="blog-item-link">Read Article</a>
+                        <a href="blog/${post.slug}.html" class="blog-item-link" style="color:white!important;">Read Article</a>
                     </div>
                 `;
                 

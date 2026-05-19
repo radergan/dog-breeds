@@ -975,3 +975,7 @@ header {
     background: #5755d9;
     height: 8px;
 }
+.breed-list-group{display:none!important;}
+.blog-item-category{display:none!important;}
+.blog-item-image{display:none!important;}
+.blog-item-link{color:white!important;text-decoration:none;}
