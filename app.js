@@ -245,6 +245,8 @@ function renderPage() {
             const temperamentChips = dog.temperament 
                 ? dog.temperament.split(',').map(trait => `<span class="chip">${trait.trim()}</span>`).join('')
                 : '';
+            // Petfinder search URL with breed pre-filled
+            const petfinderUrl = `https://www.petfinder.com/search/dogs-for-adoption/?breed[0]=${encodeURIComponent(dog.name)}`;
             return `
             <a href="breeds/${slug}.html" class="breed-list-item">
                 <img src="${dog.image}" alt="${dog.name}" class="breed-list-image">
@@ -259,7 +261,7 @@ function renderPage() {
                     </div>
                 </div>
                 <div class="breed-list-actions">
-                    <span class="breed-list-link">View Details</span>
+                    <a href="${petfinderUrl}" class="breed-list-link" target="_blank" onclick="event.stopPropagation()">Find Adoption</a>
                 </div>
             </a>`;
         }).join('');
