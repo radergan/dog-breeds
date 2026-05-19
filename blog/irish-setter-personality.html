@@ -19,7 +19,7 @@
         }
         
         .blog-post-header {
-            margin-bottom: 40px;
+            flex: 1;
         }
         
         .blog-post-category {
@@ -169,6 +169,18 @@
         .back-to-blog:hover {
             text-decoration: underline;
         }
+        
+        .blog-header-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 40px;
+        }
+        
+        .edit-blog-btn {
+            flex-shrink: 0;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
@@ -250,13 +262,18 @@
             <div class="blog-post-content-wrapper">
         
         <article class="blog-post">
-            <div class="blog-post-header">
-                <div class="blog-post-category">Breeds</div>
-                <h1 class="blog-post-title">The Irish Setter Personality: Understanding Your Redhead's Unique Temperament</h1>
-                <div class="blog-post-meta">
-                    <span>📅 2026-05-19</span>
-                    <span>✍️ Admin</span>
+            <div class="blog-header-wrapper">
+                <div class="blog-post-header">
+                    <div class="blog-post-category">Breeds</div>
+                    <h1 class="blog-post-title">The Irish Setter Personality: Understanding Your Redhead's Unique Temperament</h1>
+                    <div class="blog-post-meta">
+                        <span>📅 2026-05-19</span>
+                        <span>✍️ Admin</span>
+                    </div>
                 </div>
+                <a href="http://localhost:5000/blog/2/edit" target="_blank" class="btn btn-primary btn-sm edit-blog-btn" title="Edit blog post">
+                    <i class="icon icon-edit"></i> Edit
+                </a>
             </div>
             
             

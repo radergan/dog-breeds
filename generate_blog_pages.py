@@ -62,7 +62,7 @@ def generate_blog_post_page(post):
         }}
         
         .blog-post-header {{
-            margin-bottom: 40px;
+            flex: 1;
         }}
         
         .blog-post-category {{
@@ -212,6 +212,18 @@ def generate_blog_post_page(post):
         .back-to-blog:hover {{
             text-decoration: underline;
         }}
+        
+        .blog-header-wrapper {{
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 40px;
+        }}
+        
+        .edit-blog-btn {{
+            flex-shrink: 0;
+            margin-top: 5px;
+        }}
     </style>
 </head>
 <body>
@@ -293,13 +305,18 @@ def generate_blog_post_page(post):
             <div class="blog-post-content-wrapper">
         
         <article class="blog-post">
-            <div class="blog-post-header">
-                {f'<div class="blog-post-category">{post["category"]}</div>' if post['category'] else ''}
-                <h1 class="blog-post-title">{post['title']}</h1>
-                <div class="blog-post-meta">
-                    <span>📅 {post['published_date']}</span>
-                    <span>✍️ {post['author']}</span>
+            <div class="blog-header-wrapper">
+                <div class="blog-post-header">
+                    {f'<div class="blog-post-category">{post["category"]}</div>' if post['category'] else ''}
+                    <h1 class="blog-post-title">{post['title']}</h1>
+                    <div class="blog-post-meta">
+                        <span>📅 {post['published_date']}</span>
+                        <span>✍️ {post['author']}</span>
+                    </div>
                 </div>
+                <a href="http://localhost:5000/blog/{post['id']}/edit" target="_blank" class="btn btn-primary btn-sm edit-blog-btn" title="Edit blog post">
+                    <i class="icon icon-edit"></i> Edit
+                </a>
             </div>
             
             {f'<img src="{post["featured_image"]}" alt="{post["title"]}" class="blog-post-image">' if post['featured_image'] else ''}

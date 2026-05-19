@@ -137,11 +137,12 @@ header {
     padding-left: 18px;
 }
 .subfamily-item {
-    padding: 10px 15px 10px 30px;
+    padding: 12px;
     border-bottom: 1px solid #F5F4F1;
     cursor: pointer;
     background: #FFFFFF;
 }
+.blog-post-category{display:none!important;}
 .subfamily-item:hover {
     background: #F5F4F1;
 }
