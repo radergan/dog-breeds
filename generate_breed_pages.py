@@ -559,6 +559,8 @@ def load_template():
     </script>'''
     )
     footer_section = footer_section.replace('<script src="app.js"></script>', '')
+    footer_section = footer_section.replace('<script src="auth.js"></script>', '<script src="../auth.js"></script>')
+    footer_section = footer_section.replace('<script src="dogs.js"></script>', '<script src="../dogs.js"></script>')
     
     template = header_section + breed_content + footer_section
     return template
