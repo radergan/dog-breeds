@@ -328,7 +328,7 @@ def generate_blog_post_page(post):
             if (blogPosts.length > 0) {{
                 const recentPosts = blogPosts.slice(0, 5);
                 recentPostsContainer.innerHTML = recentPosts.map(post => `
-                    <div class="subfamily-item" style="cursor: pointer; padding: 8px 0;" onclick="window.location.href='${{post.slug}}.html'">
+                    <div class="subfamily-item" style="cursor: pointer; padding-left: 12px;" onclick="window.location.href='${{post.slug}}.html'">
                         <div class="subfamily-name" style="font-size: 14px; color: #302f79;">${{post.title}}</div>
                         <div class="subfamily-desc" style="font-size: 12px;">${{post.publishedDate}}</div>
                     </div>
@@ -348,7 +348,7 @@ def generate_blog_post_page(post):
                 categoriesContainer.innerHTML = Object.entries(categoryCount)
                     .sort(([a], [b]) => a.localeCompare(b))
                     .map(([category, count]) => `
-                        <div class="subfamily-item" style="cursor: pointer; padding: 8px 0;" onclick="window.location.href='../blog.html'">
+                        <div class="subfamily-item" style="cursor: pointer; padding-left: 12px;" onclick="window.location.href='../blog.html'">
                             <div class="subfamily-name">${{category}}</div>
                             <div class="subfamily-desc">${{count}} post${{count !== 1 ? 's' : ''}}</div>
                         </div>
