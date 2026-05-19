@@ -250,6 +250,12 @@ async function handleRegisterSubmit(e) {
     const submitBtn = form.querySelector('button[type="submit"]');
     const errorDiv = form.querySelector('.form-error');
     
+    // Clear any previous errors
+    if (errorDiv) {
+        errorDiv.style.display = 'none';
+        errorDiv.textContent = '';
+    }
+    
     // Disable submit button
     submitBtn.disabled = true;
     submitBtn.textContent = 'Creating account...';
@@ -257,9 +263,34 @@ async function handleRegisterSubmit(e) {
     const formData = new FormData(form);
     
     // Client-side validation
+    const username = formData.get('username');
+    const email = formData.get('email');
     const password = formData.get('password');
     const confirmPassword = formData.get('confirm_password');
     
+    // Check all fields are filled
+    if (!username || !email || !password || !confirmPassword) {
+        if (errorDiv) {
+            errorDiv.textContent = 'All fields are required.';
+            errorDiv.style.display = 'block';
+        }
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Register';
+        return;
+    }
+    
+    // Check password length
+    if (password.length < 6) {
+        if (errorDiv) {
+            errorDiv.textContent = 'Password must be at least 6 characters.';
+            errorDiv.style.display = 'block';
+        }
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Register';
+        return;
+    }
+    
+    // Check passwords match
     if (password !== confirmPassword) {
         if (errorDiv) {
             errorDiv.textContent = 'Passwords do not match.';
