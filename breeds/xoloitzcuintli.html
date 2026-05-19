@@ -263,6 +263,21 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- Community Gallery -->
+            <div class="community-gallery" id="community-gallery">
+                <h2>Meet the Xoloitzcuintli Community</h2>
+                <p class="gallery-subtitle">Real Xoloitzcuintlis from our community members</p>
+                <div id="community-dogs-grid" class="community-dogs-grid">
+                    <div class="loading-community">
+                        <div class="loading loading-lg"></div>
+                        <p>Loading community dogs...</p>
+                    </div>
+                </div>
+                <div class="submit-dog-cta">
+                    <p>Have a Xoloitzcuintli? <a href="../add-dog.html" class="btn btn-primary">Share Your Dog</a></p>
+                </div>
+            </div>
         </div>
         </main>
         
@@ -470,7 +485,52 @@
                     window.location.href = '../index.html';
                 });
             });
+            
+            // Load community dogs for this breed
+            loadCommunityDogs();
         });
+        
+        async function loadCommunityDogs() {
+            const breedUuid = '70c0d0e2-5fe2-423f-8553-95f97beb3a2a';
+            const container = document.getElementById('community-dogs-grid');
+            
+            try {
+                const response = await fetch(`http://localhost:5000/api/breeds/${breedUuid}/community-dogs`);
+                const data = await response.json();
+                
+                if (!data.success) {
+                    container.innerHTML = '<p style="color: #718096; text-align: center;">Unable to load community dogs</p>';
+                    return;
+                }
+                
+                if (data.dogs.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-community">
+                            <p>Be the first to share your Xoloitzcuintli!</p>
+                            <a href="../add-dog.html" class="btn btn-sm btn-primary">Add Your Dog</a>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = data.dogs.map(dog => `
+                    <div class="community-dog-card">
+                        <img src="${dog.photo_url || 'https://via.placeholder.com/300x250?text=No+Photo'}" 
+                             alt="${dog.name}" 
+                             class="community-dog-photo">
+                        <div class="community-dog-info">
+                            <h3 class="community-dog-name">${dog.name}</h3>
+                            <p class="community-dog-owner">by ${dog.username}</p>
+                            ${dog.public_comment ? `<p class="community-dog-comment">${dog.public_comment}</p>` : ''}
+                        </div>
+                    </div>
+                `).join('');
+                
+            } catch (error) {
+                console.error('Error loading community dogs:', error);
+                container.innerHTML = '<p style="color: #e74c3c; text-align: center;">Error loading community dogs</p>';
+            }
+        }
     </script>
     
 </body>

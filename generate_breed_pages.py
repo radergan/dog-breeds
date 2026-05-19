@@ -286,6 +286,21 @@ def load_template():
                     {{BACKGROUND_SECTION}}
                 </div>
             </div>
+            
+            <!-- Community Gallery -->
+            <div class="community-gallery" id="community-gallery">
+                <h2>Meet the {{BREED_NAME}} Community</h2>
+                <p class="gallery-subtitle">Real {{BREED_NAME}}s from our community members</p>
+                <div id="community-dogs-grid" class="community-dogs-grid">
+                    <div class="loading-community">
+                        <div class="loading loading-lg"></div>
+                        <p>Loading community dogs...</p>
+                    </div>
+                </div>
+                <div class="submit-dog-cta">
+                    <p>Have a {{BREED_NAME}}? <a href="../add-dog.html" class="btn btn-primary">Share Your Dog</a></p>
+                </div>
+            </div>
         </div>
         </main>
         '''
@@ -555,12 +570,164 @@ def load_template():
                     window.location.href = '../index.html';
                 });
             });
+            
+            // Load community dogs for this breed
+            loadCommunityDogs();
         });
+        
+        async function loadCommunityDogs() {
+            const breedUuid = '{{BREED_UUID}}';
+            const container = document.getElementById('community-dogs-grid');
+            
+            try {
+                const response = await fetch(`http://localhost:5000/api/breeds/${breedUuid}/community-dogs`);
+                const data = await response.json();
+                
+                if (!data.success) {
+                    container.innerHTML = '<p style="color: #718096; text-align: center;">Unable to load community dogs</p>';
+                    return;
+                }
+                
+                if (data.dogs.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-community">
+                            <p>Be the first to share your {{BREED_NAME}}!</p>
+                            <a href="../add-dog.html" class="btn btn-sm btn-primary">Add Your Dog</a>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = data.dogs.map(dog => `
+                    <div class="community-dog-card">
+                        <img src="${dog.photo_url || 'https://via.placeholder.com/300x250?text=No+Photo'}" 
+                             alt="${dog.name}" 
+                             class="community-dog-photo">
+                        <div class="community-dog-info">
+                            <h3 class="community-dog-name">${dog.name}</h3>
+                            <p class="community-dog-owner">by ${dog.username}</p>
+                            ${dog.public_comment ? `<p class="community-dog-comment">${dog.public_comment}</p>` : ''}
+                        </div>
+                    </div>
+                `).join('');
+                
+            } catch (error) {
+                console.error('Error loading community dogs:', error);
+                container.innerHTML = '<p style="color: #e74c3c; text-align: center;">Error loading community dogs</p>';
+            }
+        }
     </script>'''
     )
     footer_section = footer_section.replace('<script src="app.js"></script>', '')
     footer_section = footer_section.replace('<script src="auth.js"></script>', '<script src="../auth.js"></script>')
     footer_section = footer_section.replace('<script src="dogs.js"></script>', '<script src="../dogs.js"></script>')
+    
+    # Add community gallery CSS to styles
+    breed_specific_css = '''
+        .community-gallery {
+            margin-top: 60px;
+            padding-top: 40px;
+            border-top: 2px solid #e2e8f0;
+        }
+        
+        .community-gallery h2 {
+            text-align: center;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+        
+        .gallery-subtitle {
+            text-align: center;
+            color: #718096;
+            margin-bottom: 32px;
+        }
+        
+        .community-dogs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        
+        .loading-community {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px;
+            color: #718096;
+        }
+        
+        .empty-community {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px;
+            color: #718096;
+        }
+        
+        .community-dog-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: box-shadow 0.2s;
+        }
+        
+        .community-dog-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .community-dog-photo {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: #f7f8f9;
+        }
+        
+        .community-dog-info {
+            padding: 16px;
+        }
+        
+        .community-dog-name {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin: 0 0 4px 0;
+        }
+        
+        .community-dog-owner {
+            font-size: 0.85rem;
+            color: #718096;
+            margin: 0 0 8px 0;
+        }
+        
+        .community-dog-comment {
+            font-size: 0.9rem;
+            color: #4a5568;
+            margin: 0;
+            line-height: 1.4;
+        }
+        
+        .submit-dog-cta {
+            text-align: center;
+            padding: 32px;
+            background: #f7fafc;
+            border-radius: 8px;
+        }
+        
+        .submit-dog-cta p {
+            margin: 0;
+            color: #4a5568;
+            font-size: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .community-dogs-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    '''
+    
+    # Insert CSS before closing style tag in header
+    header_section = header_section.replace('</style>', breed_specific_css + '\n    </style>')
     
     template = header_section + breed_content + footer_section
     return template
