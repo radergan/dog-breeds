@@ -2,6 +2,11 @@
 
 # For admin panel (admin.py)
 Flask==3.0.0
+Flask-CORS
+
+# For external API integrations
+requests
+python-dotenv
 
 # For dataset processing
 kagglehub

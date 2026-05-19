@@ -2,7 +2,7 @@ const blogPosts = [
   {
     "id": 2,
     "slug": "irish-setter-personality",
-    "title": "Irish Setters: Energetic, lovable, immature",
+    "title": "Irish Setters: Energetic, Lovable and Immature",
     "excerpt": "Irish Setters are high-energy sporting dogs with distinct personality traits. Their behavior reflects their hunting heritage, and understanding their temperament is crucial for anyone considering this breed.",
     "featuredImage": "https://www.carealotpets.com/images/breeding/dog-breeds/IrishSetter.jpg",
     "publishedDate": "2026-05-19",
