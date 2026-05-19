@@ -18,6 +18,40 @@
                 <div class="tagline">&nbsp Find Your Perfect Dog Breed</div>
             </div>
 
+            <!-- Logged Out State -->
+            <div class="header-right" id="auth-logged-out">
+                <a href="login.html" class="btn btn-link">Sign In</a>
+                <a href="register.html" class="btn btn-primary">Register</a>
+            </div>
+
+            <!-- Logged In State (hidden by default) -->
+            <div class="header-right" id="auth-logged-in" style="display: none;">
+                <div class="dropdown dropdown-right">
+                    <a href="#" class="btn btn-link dropdown-toggle user-dropdown" tabindex="0">
+                        <figure class="avatar avatar-sm" data-initial="JD" style="background-color: #5755d9;"></figure>
+                        <span class="user-name">John Doe</span>
+                        <i class="icon icon-caret"></i>
+                    </a>
+                    <ul class="menu">
+                        <li class="menu-item">
+                            <a href="profile.html">
+                                <i class="icon icon-people"></i> Profile
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="settings.html">
+                                <i class="icon icon-edit"></i> Settings
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li class="menu-item">
+                            <a href="#" id="signout-btn">
+                                <i class="icon icon-shutdown"></i> Sign Out
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </header>
 
