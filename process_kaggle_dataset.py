@@ -109,17 +109,18 @@ def parse_height(height_str):
 def normalize_group(group_str):
     """Normalize group names"""
     if not group_str:
-        return 'miscellaneous', 'Miscellaneous'
+        return 'foundation-stock', 'Foundation Stock Service'
     
     group_lower = group_str.lower()
     
+    # IMPORTANT: Check 'non-sporting' BEFORE 'sporting' to avoid substring match
     group_map = {
+        'non-sporting': ('non-sporting', 'Non-Sporting Group'),
         'sporting': ('sporting', 'Sporting Group'),
         'hound': ('hound', 'Hound Group'),
         'working': ('working', 'Working Group'),
         'terrier': ('terrier', 'Terrier Group'),
         'toy': ('toy', 'Toy Group'),
-        'non-sporting': ('non-sporting', 'Non-Sporting Group'),
         'herding': ('herding', 'Herding Group'),
         'miscellaneous': ('miscellaneous', 'Miscellaneous Class'),
     }
@@ -128,7 +129,8 @@ def normalize_group(group_str):
         if key in group_lower:
             return slug, display
     
-    return 'miscellaneous', 'Miscellaneous'
+    # Default for unmatched groups: Foundation Stock Service (FSS)
+    return 'foundation-stock', 'Foundation Stock Service'
 
 def normalize_shedding(shedding_cat):
     """Normalize shedding categories from CSV"""
@@ -143,6 +145,50 @@ def normalize_shedding(shedding_cat):
         return 'Heavy Shedding'
     else:
         return 'Moderate Shedding'
+
+def is_apartment_friendly(energy_cat, demeanor_cat, size, weight_str):
+    """Determine if breed is good for apartments based on energy, demeanor, size, and weight"""
+    if not energy_cat and not demeanor_cat:
+        return False
+    
+    energy_lower = energy_cat.lower() if energy_cat else ''
+    demeanor_lower = demeanor_cat.lower() if demeanor_cat else ''
+    
+    # Parse max weight from weight string (e.g., "12-29 lbs" or "25 lbs")
+    max_weight = None
+    if weight_str and 'lbs' in weight_str:
+        import re
+        # Look for number before "lbs", prefer the larger number if range
+        numbers = re.findall(r'(\d+)\s*(?:-\s*(\d+))?\s*lbs', weight_str)
+        if numbers:
+            if numbers[0][1]:  # Range like "12-29"
+                max_weight = int(numbers[0][1])
+            else:  # Single value like "25"
+                max_weight = int(numbers[0][0])
+    
+    # Calm/low energy indicators
+    calm_energy = any(word in energy_lower for word in ['calm', 'couch potato'])
+    
+    # Reserved/shy indicators
+    reserved_demeanor = any(word in demeanor_lower for word in ['reserved', 'aloof', 'wary'])
+    
+    # Small size is a bonus for apartments
+    small_size = size == 'Small'
+    
+    # Weight-based logic
+    if max_weight and max_weight > 30:
+        # Larger dogs (>30 lbs): Must be calm AND (reserved OR small)
+        if calm_energy and (reserved_demeanor or small_size):
+            return True
+        return False
+    else:
+        # Smaller dogs (≤30 lbs): calm OR reserved qualifies
+        if calm_energy or reserved_demeanor:
+            return True
+        elif small_size and 'regular exercise' in energy_lower:
+            return True
+    
+    return False
 
 def process_csv_to_json(csv_file):
     """Convert Kaggle CSV to our JSON format"""
@@ -219,6 +265,10 @@ def process_csv_to_json(csv_file):
             # Parse group
             group, group_display = normalize_group(row.get('group') or '')
             
+            # Get categories for apartment friendliness
+            energy_cat = row.get('energy_level_category', '')
+            demeanor_cat = row.get('demeanor_category', '')
+            
             # Create breed object
             breed = {
                 'id': i,
@@ -235,14 +285,13 @@ def process_csv_to_json(csv_file):
                 'shedding': normalize_shedding(row.get('shedding_category') or ''),
                 'groomingNeeds': (row.get('grooming_frequency_value') or row.get('grooming') or 'Moderate').strip(),
                 'goodWithKids': row.get('demeanor_category', '').lower() in ['friendly', 'outgoing'],
-                'goodWithPets': row.get('demeanor_category', '').lower() in ['friendly', 'outgoing'],
+                'apartmentFriendly': is_apartment_friendly(energy_cat, demeanor_cat, size, weight),
                 'barkingLevel': (row.get('barking_level_value') or row.get('barking') or 'Moderate').strip(),
                 'origin': 'United States',  # Placeholder
                 'image': f"https://via.placeholder.com/400x400.png?text={breed_name.replace(' ', '+')}",
                 'images': [],
                 'wikipediaUrl': None,
                 # User-focused fields
-                'apartmentFriendly': 'Unknown',
                 'firstTimeOwner': 'Good',
                 'toleratesBeingAlone': 'Moderate',
                 'goodWithStrangers': 'Friendly',

@@ -3,6 +3,7 @@
 A comprehensive database of 277 AKC dog breeds with filtering, search, and individual breed pages.
 
 🌐 **Live Site**: [https://yourusername.github.io/dog-breeds](https://yourusername.github.io/dog-breeds)
+🗄️ **Database**: Supabase (PostgreSQL)
 
 ## Features
 
@@ -11,6 +12,8 @@ A comprehensive database of 277 AKC dog breeds with filtering, search, and indiv
 - 📄 **277 Individual breed pages** with detailed information
 - 📱 **Responsive design** with Spectre.css
 - 🎨 **Custom dog icons** with size badges
+- 🔐 **User authentication** ready (Supabase Auth)
+- 💾 **PostgreSQL database** with Supabase
 
 ## Data Source
 
@@ -42,6 +45,31 @@ npx http-server
 ```
 
 Visit: `http://localhost:8000`
+
+## Supabase Setup (Database)
+
+This project uses Supabase (PostgreSQL) for production database hosting.
+
+### Quick Setup
+
+1. **Create Supabase account**: https://supabase.com
+2. **Create new project** (save database password!)
+3. **Run SQL schema**:
+   - Go to SQL Editor in Supabase dashboard
+   - Copy/paste contents of `supabase_schema.sql`
+   - Run query
+4. **Set environment variables**:
+   ```bash
+   cp .env.example .env
+   # Edit .env with your Supabase credentials
+   ```
+5. **Migrate data** (optional):
+   ```bash
+   pip install supabase
+   python migrate_to_supabase.py
+   ```
+
+See [SUPABASE_SETUP.md](SUPABASE_SETUP.md) for detailed instructions.
 
 ### Managing Data
 

@@ -1,0 +1,10 @@
+# Python dependencies for local development
+
+# For admin panel (admin.py)
+Flask==3.0.0
+
+# For dataset processing
+kagglehub
+
+# For Supabase database (production)
+supabase

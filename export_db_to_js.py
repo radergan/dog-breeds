@@ -7,7 +7,7 @@ import json
 
 def export_to_js(output_file='dogs.js'):
     """Export database to JavaScript format"""
-    print(f"📤 Exporting database to {output_file}...\n")
+    print(f"Exporting database to {output_file}...\n")
     
     db = BreedDB()
     breeds = db.get_all_breeds()
@@ -35,6 +35,7 @@ def export_to_js(output_file='dogs.js'):
             'goodWithPets': bool(breed['good_with_pets']),
             'barkingLevel': breed['barking_level'],
             'origin': breed['origin'],
+            'summary': breed.get('summary'),
             'image': breed['image_url'],
             'images': [],  # TODO: Load from breed_images table
             'wikipediaUrl': breed['wikipedia_url'],
@@ -52,7 +53,7 @@ def export_to_js(output_file='dogs.js'):
         json.dump(js_breeds, f, indent=2, ensure_ascii=False)
         f.write(';\n')
     
-    print(f"✅ Exported {len(js_breeds)} breeds to {output_file}\n")
+    print(f"Successfully exported {len(js_breeds)} breeds to {output_file}\n")
 
 
 if __name__ == '__main__':

@@ -27,6 +27,13 @@ wheels/
 *.db
 *.db-journal
 
+# Admin panel (DO NOT COMMIT - local development only)
+admin.py
+
+# Environment variables (contains secrets)
+.env
+.env.local
+
 # Kaggle cache
 .kaggle/
 

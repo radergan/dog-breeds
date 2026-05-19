@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog - Dog Breed Finder</title>
+    <meta name="description" content="Dog care tips, breed guides, training advice, and more from Dog Breed Finder.">
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-exp.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-icons.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .blog-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .blog-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .blog-header h1 {
+            font-size: 48px;
+            color: #302f79;
+            margin-bottom: 10px;
+        }
+        
+        .blog-header p {
+            font-size: 18px;
+            color: #666;
+        }
+        
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .blog-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .blog-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+        
+        .blog-card-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            background: #f0f0f0;
+        }
+        
+        .blog-card-content {
+            padding: 24px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .blog-card-meta {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+            font-size: 13px;
+            color: #888;
+        }
+        
+        .blog-card-category {
+            background: #5755d9;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .blog-card-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #302f79;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+        
+        .blog-card-title a {
+            color: inherit;
+            text-decoration: none;
+        }
+        
+        .blog-card-title a:hover {
+            color: #5755d9;
+        }
+        
+        .blog-card-excerpt {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 16px;
+            flex: 1;
+        }
+        
+        .blog-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 16px;
+            border-top: 1px solid #eee;
+        }
+        
+        .blog-card-date {
+            font-size: 13px;
+            color: #888;
+        }
+        
+        .blog-card-link {
+            color: #5755d9;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .blog-card-link:hover {
+            color: #302f79;
+        }
+        
+        .no-posts {
+            text-align: center;
+            padding: 80px 20px;
+            color: #666;
+        }
+        
+        .no-posts h2 {
+            color: #302f79;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="header-left">
+                <a href="index.html" class="logo">woof_db</a>
+                <div class="tagline">&nbsp Find Your Perfect Dog Breed</div>
+            </div>
+        </div>
+    </header>
+
+    <nav class="top-nav">
+        <div class="top-nav-container">
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <a href="index.html" style="color: inherit; text-decoration: none;">Home</a>
+                </div>
+                <div class="stat-item">
+                    <a href="blog.html" style="color: inherit; text-decoration: none; font-weight: bold;">Blog</a>
+                </div>
+                <div class="stat-item">
+                    <span>About Us</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="blog-container">
+        <div class="blog-header">
+            <h1>Blog</h1>
+            <p>Dog care tips, breed guides, training advice, and more</p>
+        </div>
+
+        <div class="blog-grid" id="blog-grid">
+            <!-- Blog posts will be inserted here by JavaScript -->
+        </div>
+        
+        <div class="no-posts" id="no-posts" style="display: none;">
+            <h2>No posts yet</h2>
+            <p>Check back soon for dog care tips and breed guides!</p>
+        </div>
+    </div>
+
+    <script src="blog-posts.js"></script>
+    <script>
+        // Render blog posts
+        const blogGrid = document.getElementById('blog-grid');
+        const noPosts = document.getElementById('no-posts');
+        
+        if (blogPosts.length === 0) {
+            blogGrid.style.display = 'none';
+            noPosts.style.display = 'block';
+        } else {
+            blogPosts.forEach(post => {
+                const card = document.createElement('div');
+                card.className = 'blog-card';
+                
+                const imageHtml = post.featuredImage 
+                    ? `<img src="${post.featuredImage}" alt="${post.title}" class="blog-card-image">`
+                    : '<div class="blog-card-image" style="background: linear-gradient(135deg, #5755d9 0%, #302f79 100%);"></div>';
+                
+                const categoryHtml = post.category 
+                    ? `<span class="blog-card-category">${post.category}</span>`
+                    : '';
+                
+                card.innerHTML = `
+                    ${imageHtml}
+                    <div class="blog-card-content">
+                        <div class="blog-card-meta">
+                            ${categoryHtml}
+                            <span class="blog-card-date">${post.publishedDate}</span>
+                        </div>
+                        <h2 class="blog-card-title">
+                            <a href="blog/${post.slug}.html">${post.title}</a>
+                        </h2>
+                        <div class="blog-card-excerpt">${post.excerpt || ''}</div>
+                        <div class="blog-card-footer">
+                            <a href="blog/${post.slug}.html" class="blog-card-link">Read more →</a>
+                        </div>
+                    </div>
+                `;
+                
+                blogGrid.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>

@@ -24,6 +24,12 @@ if (speciesCount) {
     speciesCount.textContent = dogs.length;
 }
 
+// Update breed count badge in sidebar
+const breedCountBadge = document.getElementById('breed-count-badge');
+if (breedCountBadge) {
+    breedCountBadge.textContent = dogs.length;
+}
+
 // Update breadcrumbs
 function updateBreadcrumbs(filterType, filterName) {
     if (!filterType && !filterName) {

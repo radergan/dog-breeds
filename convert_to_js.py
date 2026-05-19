@@ -25,12 +25,6 @@ def convert_to_js():
             else:
                 f.write(f'    goodWithKids: "{breed["goodWithKids"]}",\n')
             
-            # Handle goodWithPets which might be string or boolean
-            if isinstance(breed["goodWithPets"], bool):
-                f.write(f'    goodWithPets: {str(breed["goodWithPets"]).lower()},\n')
-            else:
-                f.write(f'    goodWithPets: "{breed["goodWithPets"]}",\n')
-            
             f.write(f'    groomingNeeds: "{breed["groomingNeeds"]}",\n')
             f.write(f'    trainability: "{breed["trainability"]}",\n')
             f.write(f'    shedding: "{breed["shedding"]}",\n')
@@ -69,8 +63,11 @@ def convert_to_js():
                 f.write(f'    exerciseNeeds: "{breed["exerciseNeeds"]}",\n')
             
             # New user-focused fields
-            if breed.get('apartmentFriendly'):
-                f.write(f'    apartmentFriendly: "{breed["apartmentFriendly"]}",\n')
+            if breed.get('apartmentFriendly') is not None:
+                if isinstance(breed['apartmentFriendly'], bool):
+                    f.write(f'    apartmentFriendly: {str(breed["apartmentFriendly"]).lower()},\n')
+                else:
+                    f.write(f'    apartmentFriendly: "{breed["apartmentFriendly"]}",\n')
             
             if breed.get('firstTimeOwner'):
                 f.write(f'    firstTimeOwner: "{breed["firstTimeOwner"]}",\n')

@@ -1,5 +1,6 @@
 import json
 import os
+import breed_db
 
 def create_slug(name):
     """Create URL-friendly slug from breed name"""
@@ -19,25 +20,38 @@ def generate_breed_page(breed, template):
         return str(value).lower().strip() not in useless_values
     
     # Handle boolean/string values
-    kids_friendly = 'Yes' if breed['goodWithKids'] == True else ('No' if breed['goodWithKids'] == False else breed['goodWithKids'])
-    pets_friendly = 'Yes' if breed['goodWithPets'] == True else ('No' if breed['goodWithPets'] == False else breed['goodWithPets'])
+    kids_value = breed.get('goodWithKids')
+    kids_friendly = 'Yes' if kids_value == True or kids_value == 1 else ('No' if kids_value == False or kids_value == 0 else 'Unknown')
+    
+    pets_value = breed.get('goodWithPets')
+    pets_friendly = 'Yes' if pets_value == True or pets_value == 1 else ('No' if pets_value == False or pets_value == 0 else 'Unknown')
     
     # Build image gallery HTML
     images_html = ''
-    if breed.get('images') and len(breed['images']) > 1:
-        for idx, img_url in enumerate(breed['images']):
+    main_image = breed.get('image', f'https://via.placeholder.com/400x400.png?text={breed["name"].replace(" ", "+")}')
+    additional_images = breed.get('images', [])
+    
+    # Combine main image with additional images
+    all_images = [main_image]
+    if additional_images:
+        all_images.extend(additional_images)
+    
+    if len(all_images) > 1:
+        # Multiple images - create gallery with navigation
+        for idx, img_url in enumerate(all_images):
             active = 'active' if idx == 0 else ''
             images_html += f'<img src="{img_url}" alt="{breed["name"]} photo {idx+1}" class="breed-image {active}" id="image-{idx}">\n                '
         
-        # Add navigation if multiple images
+        # Add navigation
         nav_html = f'''
                 <div class="image-nav">
                     <button class="nav-btn prev" onclick="changeImage(-1)">‹</button>
-                    <span class="image-indicator" id="image-indicator">1 of {len(breed['images'])}</span>
+                    <span class="image-indicator" id="image-indicator">1 of {len(all_images)}</span>
                     <button class="nav-btn next" onclick="changeImage(1)">›</button>
                 </div>'''
     else:
-        images_html = f'<img src="{breed["image"]}" alt="{breed["name"]}" class="breed-image active">'
+        # Single image only
+        images_html = f'<img src="{main_image}" alt="{breed["name"]}" class="breed-image active">'
         nav_html = ''
     
     # Build Size & Physical Traits section with only useful data
@@ -80,23 +94,80 @@ def generate_breed_page(breed, template):
     else:
         background_section = ''
     
+    # Generate temperament chips
+    temperament_traits = [trait.strip() for trait in breed['temperament'].split(',')]
+    temperament_chips = '\n                    '.join([f'<span class="chip">{trait}</span>' for trait in temperament_traits])
+    
+    # Build summary section with gallery
+    summary = breed.get('summary')
+    if summary and summary.strip():
+        summary_section = f'''<div class="breed-summary">
+                    <div class="summary-text">
+                        <h2>About the {breed['name']}</h2>
+                        <p>{summary}</p>
+                    </div>
+                    <div class="breed-images">
+                        <div class="image-container">
+                            {images_html}
+                        </div>
+                        {nav_html}
+                    </div>
+                </div>'''
+    else:
+        # No summary, just show gallery
+        summary_section = f'''<div class="breed-images-only">
+                    <div class="image-container">
+                        {images_html}
+                    </div>
+                    {nav_html}
+                </div>'''
+    
+    # Convert boolean fields to Yes/No
+    apartment_friendly = 'Yes' if breed.get('apartmentFriendly') == True else ('No' if breed.get('apartmentFriendly') == False else 'Unknown')
+    strangers = 'Yes' if breed.get('goodWithStrangers') == True else ('No' if breed.get('goodWithStrangers') == False else 'Unknown')
+    alone_time = 'Yes' if breed.get('toleratesBeingAlone') == True else ('No' if breed.get('toleratesBeingAlone') == False else 'Unknown')
+    first_time = 'Yes' if breed.get('firstTimeOwner') == True else ('No' if breed.get('firstTimeOwner') == False else 'Unknown')
+    
+    # Convert grooming and trainability to progress bars
+    def make_progress_bar(value_str):
+        try:
+            value = float(value_str)
+            percentage = int(value * 100)
+            return f'<div class="bar"><div class="bar-item" role="progressbar" style="width:{percentage}%;" aria-valuenow="{percentage}" aria-valuemin="0" aria-valuemax="100"></div></div>'
+        except:
+            return value_str
+    
+    grooming_bar = make_progress_bar(breed['groomingNeeds'])
+    trainability_bar = make_progress_bar(breed['trainability'])
+    
+    # Prepare social sharing metadata
+    summary = breed.get('summary')
+    summary_preview = summary[:150] + '...' if summary and len(summary) > 150 else (summary or f"Learn about the {breed['name']}: {breed['temperament']}")
+    image_url = breed['image'] if breed['image'].startswith('http') else f"https://yourusername.github.io/dog-breeds/{breed['image']}"
+    
     # Replace placeholders in template
-    html = template.replace('{{BREED_NAME}}', breed['name'])
+    html = template.replace('{{BREED_UUID}}', breed['uuid'])
+    html = html.replace('{{BREED_NAME}}', breed['name'])
     html = html.replace('{{BREED_SLUG}}', slug)
+    html = html.replace('{{SLUG}}', slug)  # For social sharing
+    html = html.replace('{{IMAGE_URL}}', image_url)  # For social sharing
+    html = html.replace('{{SUMMARY_PREVIEW}}', summary_preview)  # For social sharing
     html = html.replace('{{GROUP_DISPLAY}}', breed['groupDisplay'])
+    html = html.replace('{{TEMPERAMENT_CHIPS}}', temperament_chips)
+    html = html.replace('{{SUMMARY_SECTION}}', summary_section)
     html = html.replace('{{SIZE_PHYSICAL_HTML}}', size_physical_html)
     html = html.replace('{{TEMPERAMENT}}', breed['temperament'])
     html = html.replace('{{ENERGY_LEVEL}}', breed['energyLevel'])
     html = html.replace('{{EXERCISE_NEEDS}}', breed.get('exerciseNeeds', 'Moderate exercise'))
-    html = html.replace('{{APARTMENT_FRIENDLY}}', breed.get('apartmentFriendly', 'Unknown'))
+    html = html.replace('{{APARTMENT_FRIENDLY}}', apartment_friendly)
     html = html.replace('{{KIDS_FRIENDLY}}', kids_friendly)
     html = html.replace('{{PETS_FRIENDLY}}', pets_friendly)
-    html = html.replace('{{STRANGERS}}', breed.get('goodWithStrangers', 'Unknown'))
-    html = html.replace('{{ALONE_TIME}}', breed.get('toleratesBeingAlone', 'Unknown'))
-    html = html.replace('{{FIRST_TIME_OWNER}}', breed.get('firstTimeOwner', 'Unknown'))
-    html = html.replace('{{GROOMING}}', breed['groomingNeeds'])
+    html = html.replace('{{STRANGERS}}', strangers)
+    html = html.replace('{{ALONE_TIME}}', alone_time)
+    html = html.replace('{{FIRST_TIME_OWNER}}', first_time)
+    html = html.replace('{{GROOMING}}', grooming_bar)
     html = html.replace('{{SHEDDING}}', breed['shedding'])
-    html = html.replace('{{TRAINABILITY}}', breed['trainability'])
+    html = html.replace('{{TRAINABILITY}}', trainability_bar)
     html = html.replace('{{BARKING}}', breed.get('barkingLevel', 'Unknown'))
     html = html.replace('{{BACKGROUND_SECTION}}', background_section)
     html = html.replace('{{IMAGES_HTML}}', images_html)
@@ -109,39 +180,67 @@ def load_template():
     """Load the breed page template from index.html"""
     # Read index.html
     with open('index.html', 'r', encoding='utf-8') as f:
-        lines = f.readlines()
+        html_content = f.read()
     
-    # Get everything before preview-section (line 646 in 1-indexed = index 645 in 0-indexed, so use [0:645])
-    header_section = ''.join(lines[0:645])
+    # Find the preview-section div (this is where breed-specific content starts)
+    preview_start = html_content.find('<div class="preview-section" id="preview-section">')
+    if preview_start == -1:
+        raise ValueError("Could not find preview-section in index.html")
     
-    # Get everything after preview-section closes (lines 659-754, but in 0-indexed that's 658-753)
-    footer_section = ''.join(lines[658:])
+    # Header section: everything up to (but not including) the preview-section
+    header_section = html_content[:preview_start].rstrip() + '\n        '
     
-    # Remove breadcrumbs from breed pages
-    breadcrumb_start = header_section.find('<div class="breadcrumb-search-container">')
-    breadcrumb_end = header_section.find('</div>', breadcrumb_start) + len('</div>')
-    if breadcrumb_start != -1 and breadcrumb_end != -1:
-        # Find the next newline after </div> to keep formatting clean
-        next_newline = header_section.find('\n', breadcrumb_end)
-        if next_newline != -1:
-            breadcrumb_end = next_newline + 1
-        header_section = header_section[:breadcrumb_start] + header_section[breadcrumb_end:]
+    # Footer section: find the closing </main> tag and take everything after it
+    main_end = html_content.find('</main>', preview_start)
+    if main_end == -1:
+        raise ValueError("Could not find </main> in index.html")
+    
+    # Skip past </main> and get everything after
+    footer_section = html_content[main_end + len('</main>'):]
+    
+    # Update breadcrumbs for breed pages
+    # Change "All Breeds" to be a link, and add the breed name as current
+    breadcrumb_pattern = '''<ul class="breadcrumb" id="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="index.html">Home</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="#" id="breadcrumb-current">All Breeds</a>
+                </li>
+            </ul>'''
+    
+    breadcrumb_replacement = '''<ul class="breadcrumb" id="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="../index.html">Home</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="../index.html">All Breeds</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <span id="breadcrumb-current">{{BREED_NAME}}</span>
+                </li>
+            </ul>'''
+    
+    if breadcrumb_pattern in header_section:
+        header_section = header_section.replace(breadcrumb_pattern, breadcrumb_replacement)
     
     # Build the breed-specific preview-section content
-    breed_content = '''
-        <div class="preview-section show" id="preview-section">
+    breed_content = '''<div class="preview-section show" id="preview-section">
             <div class="breed-header">
-                <h1 class="breed-title">{{BREED_NAME}}</h1>
-                <p class="breed-subtitle">{{GROUP_DISPLAY}}</p>
+                <div class="breed-header-content">
+                    <h1 class="breed-title">{{BREED_NAME}}</h1>
+                    <p class="breed-subtitle">{{GROUP_DISPLAY}}</p>
+                    <div class="temperament-chips">
+                        {{TEMPERAMENT_CHIPS}}
+                    </div>
+                </div>
+                <a href="http://localhost:5000/breeds/{{BREED_UUID}}/edit" target="_blank" class="btn btn-primary btn-sm edit-breed-btn" title="Edit breed data">
+                    <i class="icon icon-edit"></i> Edit
+                </a>
             </div>
             
             <div class="breed-content">
-                <div class="breed-images">
-                    <div class="image-container">
-                        {{IMAGES_HTML}}
-                    </div>
-                    {{IMAGE_NAV_HTML}}
-                </div>
+                {{SUMMARY_SECTION}}
                 
                 <div class="breed-info">
                     <div class="info-section">
@@ -159,46 +258,6 @@ def load_template():
                     </div>
                     
                     <div class="info-section">
-                        <h2>Living Situation</h2>
-                        <div class="info-grid">
-                            <div class="info-item">
-                                <div class="info-label">Apartment Friendly</div>
-                                <div class="info-value">{{APARTMENT_FRIENDLY}}</div>
-                            </div>
-                            <div class="info-item">
-                                <div class="info-label">First-Time Owner</div>
-                                <div class="info-value">{{FIRST_TIME_OWNER}}</div>
-                            </div>
-                            <div class="info-item">
-                                <div class="info-label">Can Be Left Alone</div>
-                                <div class="info-value">{{ALONE_TIME}}</div>
-                            </div>
-                            <div class="info-item">
-                                <div class="info-label">Energy Level</div>
-                                <div class="info-value">{{ENERGY_LEVEL}}</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="info-section">
-                        <h2>Family & Social</h2>
-                        <div class="info-grid">
-                            <div class="info-item">
-                                <div class="info-label">Good with Kids</div>
-                                <div class="info-value">{{KIDS_FRIENDLY}}</div>
-                            </div>
-                            <div class="info-item">
-                                <div class="info-label">Good with Pets</div>
-                                <div class="info-value">{{PETS_FRIENDLY}}</div>
-                            </div>
-                            <div class="info-item">
-                                <div class="info-label">With Strangers</div>
-                                <div class="info-value">{{STRANGERS}}</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="info-section">
                         <h2>Care & Training</h2>
                         <div class="info-grid">
                             <div class="info-item">
@@ -206,7 +265,7 @@ def load_template():
                                 <div class="info-value">{{EXERCISE_NEEDS}}</div>
                             </div>
                             <div class="info-item">
-                                <div class="info-label">Grooming</div>
+                                <div class="info-label">Grooming Needs</div>
                                 <div class="info-value">{{GROOMING}}</div>
                             </div>
                             <div class="info-item">
@@ -214,7 +273,7 @@ def load_template():
                                 <div class="info-value">{{SHEDDING}}</div>
                             </div>
                             <div class="info-item">
-                                <div class="info-label">Trainability</div>
+                                <div class="info-label">Easy to Train</div>
                                 <div class="info-value">{{TRAINABILITY}}</div>
                             </div>
                             <div class="info-item">
@@ -228,6 +287,7 @@ def load_template():
                 </div>
             </div>
         </div>
+        </main>
         '''
     
     # Combine: header + breed content + footer
@@ -242,28 +302,12 @@ def load_template():
     )
     # Fix links to go back to parent directory
     header_section = header_section.replace('href="index.html"', 'href="../index.html"')
+    header_section = header_section.replace('src="images/', 'src="../images/')
+    header_section = header_section.replace('href="styles.css"', 'href="../styles.css"')
     
-    # Replace the sidebar content with simple back link
-    sidebar_start = header_section.find('<aside class="sidebar">')
-    sidebar_end = header_section.find('</aside>') + len('</aside>')
-    if sidebar_start != -1 and sidebar_end != -1:
-        new_sidebar = '''<aside class="sidebar">
-            <div class="side-nav">
-                <div class="accordion">
-                    <input type="checkbox" id="accordion-0" name="accordion-checkbox" checked>
-                    <label class="accordion-header" for="accordion-0">Quick Links</label>
-                    <div class="accordion-body">
-                        <a href="../index.html" style="text-decoration: none;">
-                            <div class="subfamily-item">
-                                <div class="subfamily-name">← Back to Browse</div>
-                                <div class="subfamily-desc">View all breeds</div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </aside>'''
-        header_section = header_section[:sidebar_start] + new_sidebar + header_section[sidebar_end:]
+    # Update sidebar links to navigate to browse page with filters
+    # Convert data-filter attributes to links that go back to index with hash
+    header_section = header_section.replace('id="all-primates-btn"', 'onclick="window.location.href=\'../index.html\'"')
     
     # Add breed-specific CSS before </style>
     breed_css = '''
@@ -271,6 +315,19 @@ def load_template():
             margin-bottom: 30px;
             padding-bottom: 20px;
             border-bottom: 2px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+        }
+        
+        .breed-header-content {
+            flex: 1;
+        }
+        
+        .edit-breed-btn {
+            flex-shrink: 0;
+            margin-top: 5px;
         }
         
         .breed-title {
@@ -284,6 +341,23 @@ def load_template():
             font-size: 1rem;
             color: #718096;
             margin: 0;
+        }
+        
+        .temperament-chips {
+            margin-top: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .temperament-chips .chip {
+            background: #5755d9;
+            border: 1px solid #302f79;
+            color: #fff;
+            font-size: 0.875rem;
+            padding: 18px;
+            border-radius: 1rem;
+            font-weight: 500;
         }
         
         .breed-content {
@@ -427,12 +501,13 @@ def load_template():
             }
         }
     '''
-    header_section = header_section.replace('</style>', breed_css + '\n    </style>')
+    # CSS is now external, no need to inject breed-specific styles
     
-    # Add gallery navigation script before </body>
+    # Add gallery navigation and sidebar navigation script before </body>
     footer_section = footer_section.replace(
         '<script src="dogs.js"></script>',
         '''<script>
+        // Image gallery navigation
         let currentImageIndex = 0;
         const images = document.querySelectorAll('.breed-image');
         const totalImages = images.length;
@@ -446,6 +521,40 @@ def load_template():
             
             document.getElementById('image-indicator').textContent = `${currentImageIndex + 1} of ${totalImages}`;
         }
+        
+        // Sidebar navigation for breed pages
+        document.addEventListener('DOMContentLoaded', function() {
+            // "View all breeds" button
+            const viewAllBtn = document.getElementById('all-primates-btn');
+            if (viewAllBtn) {
+                viewAllBtn.style.cursor = 'pointer';
+            }
+            
+            // Size filter items - navigate to index with size filter
+            document.querySelectorAll('.dog-size-item').forEach(item => {
+                item.style.cursor = 'pointer';
+                item.addEventListener('click', function() {
+                    const size = this.getAttribute('data-value');
+                    window.location.href = `../index.html#size-${size}`;
+                });
+            });
+            
+            // Group filter items - navigate to index with group filter
+            document.querySelectorAll('.subfamily-item[data-filter="group"]').forEach(item => {
+                item.style.cursor = 'pointer';
+                item.addEventListener('click', function() {
+                    const group = this.getAttribute('data-value');
+                    window.location.href = `../index.html#group-${group}`;
+                });
+            });
+            
+            // Trait checkboxes - navigate to index
+            document.querySelectorAll('.filter-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    window.location.href = '../index.html';
+                });
+            });
+        });
     </script>'''
     )
     footer_section = footer_section.replace('<script src="app.js"></script>', '')
@@ -453,11 +562,53 @@ def load_template():
     template = header_section + breed_content + footer_section
     return template
 
+def snake_to_camel(breeds):
+    """Convert database snake_case keys to camelCase for template compatibility"""
+    converted = []
+    for breed in breeds:
+        converted_breed = {
+            'uuid': breed['uuid'],
+            'id': breed.get('legacy_id', breed['uuid']),
+            'name': breed['name'],
+            'slug': breed['slug'],
+            'group': breed['group_slug'],
+            'groupDisplay': breed['group_display'],
+            'size': breed['size'],
+            'weight': breed['weight'],
+            'height': breed['height'],
+            'lifespan': breed['lifespan'],
+            'temperament': breed['temperament'],
+            'energyLevel': breed['energy_level'],
+            'trainability': breed['trainability'],
+            'shedding': breed['shedding'],
+            'groomingNeeds': breed['grooming_needs'],
+            'goodWithKids': breed['good_with_kids'],
+            'goodWithPets': breed['good_with_pets'],
+            'barkingLevel': breed['barking_level'],
+            'origin': breed['origin'],
+            'summary': breed.get('summary'),
+            'image': breed['image_url'],
+            'images': breed.get('images', []),
+            'wikipediaUrl': breed['wikipedia_url'],
+            'apartmentFriendly': breed['apartment_friendly']
+        }
+        converted.append(converted_breed)
+    return converted
+
 def main():
     """Generate all breed pages"""
-    # Load Kaggle breeds data
-    with open('dog_breeds_kaggle.json', 'r', encoding='utf-8') as f:
-        breeds = json.load(f)
+    # Load breeds from database (has latest data including admin-added images)
+    db = breed_db.BreedDB()
+    breeds = db.get_all_breeds()
+    
+    # Add images to each breed
+    for breed in breeds:
+        images = db.get_breed_images(breed['uuid'])
+        # Extract just the URLs from the image objects
+        breed['images'] = [img['image_url'] for img in images if not img.get('is_primary')]
+    
+    # Convert to camelCase for template compatibility
+    breeds = snake_to_camel(breeds)
     
     # Create breeds directory
     os.makedirs('breeds', exist_ok=True)
