@@ -302,6 +302,7 @@ def load_template():
     )
     # Fix links to go back to parent directory
     header_section = header_section.replace('href="index.html"', 'href="../index.html"')
+    header_section = header_section.replace('href="blog.html"', 'href="../blog.html"')
     header_section = header_section.replace('src="images/', 'src="../images/')
     header_section = header_section.replace('href="styles.css"', 'href="../styles.css"')
     
