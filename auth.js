@@ -43,6 +43,12 @@ async function checkAuthState() {
             signoutBtn.addEventListener('click', handleLogout);
         }
         
+        // Setup dropdown toggle
+        setupDropdownToggle();
+        
+        // Setup modal handlers
+        setupModalHandlers();
+        
     } catch (error) {
         console.error('Failed to check auth state:', error);
         // Default to logged-out state on error
@@ -90,6 +96,209 @@ async function handleLogout(e) {
     } catch (error) {
         console.error('Logout failed:', error);
         alert('Logout failed. Please try again.');
+    }
+}
+
+// Setup dropdown toggle for user menu
+function setupDropdownToggle() {
+    const dropdown = document.querySelector('.user-dropdown');
+    if (dropdown) {
+        dropdown.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const dropdownParent = this.closest('.dropdown');
+            dropdownParent.classList.toggle('active');
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function closeDropdown(event) {
+                if (!dropdownParent.contains(event.target)) {
+                    dropdownParent.classList.remove('active');
+                    document.removeEventListener('click', closeDropdown);
+                }
+            });
+        });
+    }
+}
+
+// Setup modal handlers
+function setupModalHandlers() {
+    // Open login modal
+    const loginBtn = document.getElementById('open-login-modal');
+    if (loginBtn) {
+        loginBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            openModal('login-modal');
+        });
+    }
+    
+    // Open register modal
+    const registerBtn = document.getElementById('open-register-modal');
+    if (registerBtn) {
+        registerBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            openModal('register-modal');
+        });
+    }
+    
+    // Close modals
+    document.querySelectorAll('.modal-close, .modal-overlay').forEach(el => {
+        el.addEventListener('click', function(e) {
+            e.preventDefault();
+            closeModal(this.closest('.modal').id);
+        });
+    });
+    
+    // Switch between login and register
+    const switchToRegister = document.getElementById('switch-to-register');
+    if (switchToRegister) {
+        switchToRegister.addEventListener('click', function(e) {
+            e.preventDefault();
+            closeModal('login-modal');
+            openModal('register-modal');
+        });
+    }
+    
+    const switchToLogin = document.getElementById('switch-to-login');
+    if (switchToLogin) {
+        switchToLogin.addEventListener('click', function(e) {
+            e.preventDefault();
+            closeModal('register-modal');
+            openModal('login-modal');
+        });
+    }
+    
+    // Form submissions
+    const loginForm = document.getElementById('login-form');
+    if (loginForm) {
+        loginForm.addEventListener('submit', handleLoginSubmit);
+    }
+    
+    const registerForm = document.getElementById('register-form');
+    if (registerForm) {
+        registerForm.addEventListener('submit', handleRegisterSubmit);
+    }
+}
+
+function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        document.body.classList.add('modal-open');
+    }
+}
+
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+        document.body.classList.remove('modal-open');
+    }
+}
+
+async function handleLoginSubmit(e) {
+    e.preventDefault();
+    
+    const form = e.target;
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const errorDiv = form.querySelector('.form-error');
+    
+    // Disable submit button
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Signing in...';
+    
+    const formData = new FormData(form);
+    
+    try {
+        const response = await fetch('http://localhost:5000/login', {
+            method: 'POST',
+            credentials: 'include',
+            body: formData
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Close modal and reload to update auth state
+            closeModal('login-modal');
+            location.reload();
+        } else {
+            // Show error
+            if (errorDiv) {
+                errorDiv.textContent = data.error || 'Login failed. Please try again.';
+                errorDiv.style.display = 'block';
+            }
+        }
+    } catch (error) {
+        console.error('Login error:', error);
+        if (errorDiv) {
+            errorDiv.textContent = 'Network error. Please try again.';
+            errorDiv.style.display = 'block';
+        }
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Sign In';
+    }
+}
+
+async function handleRegisterSubmit(e) {
+    e.preventDefault();
+    
+    const form = e.target;
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const errorDiv = form.querySelector('.form-error');
+    
+    // Disable submit button
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Creating account...';
+    
+    const formData = new FormData(form);
+    
+    // Client-side validation
+    const password = formData.get('password');
+    const confirmPassword = formData.get('confirm_password');
+    
+    if (password !== confirmPassword) {
+        if (errorDiv) {
+            errorDiv.textContent = 'Passwords do not match.';
+            errorDiv.style.display = 'block';
+        }
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Register';
+        return;
+    }
+    
+    try {
+        const response = await fetch('http://localhost:5000/register', {
+            method: 'POST',
+            credentials: 'include',
+            body: formData
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Close modal and reload to update auth state
+            closeModal('register-modal');
+            location.reload();
+        } else {
+            // Show error
+            if (errorDiv) {
+                errorDiv.textContent = data.error || 'Registration failed. Please try again.';
+                errorDiv.style.display = 'block';
+            }
+        }
+    } catch (error) {
+        console.error('Registration error:', error);
+        if (errorDiv) {
+            errorDiv.textContent = 'Network error. Please try again.';
+            errorDiv.style.display = 'block';
+        }
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Register';
     }
 }
 
