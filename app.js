@@ -242,13 +242,16 @@ function renderPage() {
     if (previewList) {
         previewList.innerHTML = currentFilterDogs.map(dog => {
             const slug = createSlug(dog.name);
+            const temperamentChips = dog.temperament 
+                ? dog.temperament.split(',').map(trait => `<span class="chip">${trait.trim()}</span>`).join('')
+                : '';
             return `
             <a href="breeds/${slug}.html" class="breed-list-item">
                 <img src="${dog.image}" alt="${dog.name}" class="breed-list-image">
                 <div class="breed-list-content">
                     <span class="breed-list-group">${dog.groupDisplay}</span>
                     <div class="breed-list-name">${dog.name}</div>
-                    <div class="breed-list-temperament">${dog.temperament}</div>
+                    <div class="breed-list-temperament">${temperamentChips}</div>
                     <div class="breed-list-meta">
                         <span>Size: ${dog.size}</span>
                         <span>Weight: ${dog.weight}</span>
