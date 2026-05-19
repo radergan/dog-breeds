@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Dog - Dog Breed Finder</title>
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-exp.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-icons.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .add-dog-container {
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        
+        .form-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 40px;
+        }
+        
+        .form-card h1 {
+            margin: 0 0 24px 0;
+            color: #2d3748;
+        }
+        
+        .form-section {
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .form-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        
+        .form-section h3 {
+            color: #4a5568;
+            font-size: 1rem;
+            margin: 0 0 16px 0;
+            font-weight: 600;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 32px;
+        }
+        
+        .help-text {
+            font-size: 0.85rem;
+            color: #718096;
+            margin-top: 4px;
+        }
+        
+        .public-fields {
+            background: #f7fafc;
+            padding: 16px;
+            border-radius: 4px;
+            margin-top: 12px;
+            border: 1px solid #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="header-left">
+                <a href="index.html" class="logo">woof_db</a>
+                <div class="tagline">&nbsp Find Your Perfect Dog Breed</div>
+            </div>
+
+            <!-- Logged Out State -->
+            <div class="header-right" id="auth-logged-out">
+                <a href="#" id="open-login-modal" class="btn btn-link">Sign In</a>
+                <a href="#" id="open-register-modal" class="btn btn-primary">Register</a>
+            </div>
+
+            <!-- Logged In State (hidden by default) -->
+            <div class="header-right" id="auth-logged-in" style="display: none;">
+                <div class="dropdown dropdown-right">
+                    <a href="#" class="btn btn-link dropdown-toggle user-dropdown" tabindex="0">
+                        <figure class="avatar avatar-sm" data-initial="JD" style="background-color: #5755d9;"></figure>
+                        <span class="user-name">John Doe</span>
+                        <i class="icon icon-caret"></i>
+                    </a>
+                    <ul class="menu">
+                        <li class="menu-item">
+                            <a href="my-dogs.html">
+                                <i class="icon icon-people"></i> My Dogs
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li class="menu-item">
+                            <a href="#" id="signout-btn">
+                                <i class="icon icon-shutdown"></i> Sign Out
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="add-dog-container">
+        <div class="form-card">
+            <h1>Add Your Dog</h1>
+            
+            <form id="add-dog-form">
+                <div class="form-section">
+                    <h3>Basic Information</h3>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="dog-name">Dog's Name <span style="color: #e74c3c;">*</span></label>
+                        <input class="form-input" type="text" id="dog-name" name="name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="breed-select">Breed <span style="color: #e74c3c;">*</span></label>
+                        <select class="form-select" id="breed-select" name="breed_uuid" required>
+                            <option value="">Select a breed...</option>
+                        </select>
+                        <p class="help-text">Can't find your breed? <a href="index.html">Browse all breeds</a></p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="birthdate">Birthdate</label>
+                        <input class="form-input" type="date" id="birthdate" name="birthdate">
+                        <p class="help-text">Optional: Help track your dog's age</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="weight">Weight (lbs)</label>
+                        <input class="form-input" type="number" id="weight" name="weight" min="0" step="0.1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="photo-url">Photo URL</label>
+                        <input class="form-input" type="url" id="photo-url" name="photo_url" placeholder="https://...">
+                        <p class="help-text">Direct link to your dog's photo (we'll add upload later)</p>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3>Community Sharing</h3>
+                    
+                    <label class="form-checkbox">
+                        <input type="checkbox" id="is-public" name="is_public">
+                        <i class="form-icon"></i> Feature my dog on the breed page
+                    </label>
+                    <p class="help-text">Show your dog in the community gallery for this breed</p>
+                    
+                    <div id="public-fields" class="public-fields" style="display: none;">
+                        <div class="form-group">
+                            <label class="form-label" for="public-comment">About Your Dog</label>
+                            <textarea class="form-input" id="public-comment" name="public_comment" rows="3" placeholder="Tell us about your dog's personality, favorite activities, or fun facts..."></textarea>
+                            <p class="help-text">This will be shown publicly if your submission is approved</p>
+                        </div>
+                        
+                        <div class="toast toast-warning">
+                            <i class="icon icon-flag"></i>
+                            Your submission will be reviewed before appearing publicly
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="form-error" class="toast toast-error" style="display:none; margin-top: 20px;"></div>
+                <div id="form-success" class="toast toast-success" style="display:none; margin-top: 20px;"></div>
+                
+                <div class="form-actions">
+                    <a href="my-dogs.html" class="btn">Cancel</a>
+                    <button type="submit" class="btn btn-primary" id="submit-btn">Add Dog</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script src="auth.js"></script>
+    <script src="dogs.js"></script>
+    <script>
+        // Check auth on page load
+        async function checkAuth() {
+            const response = await fetch('http://localhost:5000/api/auth/check', {
+                credentials: 'include'
+            });
+            const data = await response.json();
+            
+            if (!data.authenticated) {
+                window.location.href = 'index.html';
+                return false;
+            }
+            return true;
+        }
+
+        // Toggle public fields visibility
+        document.getElementById('is-public').addEventListener('change', function() {
+            document.getElementById('public-fields').style.display = 
+                this.checked ? 'block' : 'none';
+        });
+
+        // Load breeds into dropdown
+        function loadBreeds() {
+            const select = document.getElementById('breed-select');
+            
+            // dogs is loaded from dogs.js
+            if (typeof dogs !== 'undefined') {
+                // Sort breeds alphabetically
+                const sortedDogs = [...dogs].sort((a, b) => a.name.localeCompare(b.name));
+                
+                sortedDogs.forEach(dog => {
+                    const option = document.createElement('option');
+                    option.value = dog.uuid;
+                    option.textContent = dog.name;
+                    select.appendChild(option);
+                });
+            }
+        }
+
+        // Handle form submission
+        document.getElementById('add-dog-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formError = document.getElementById('form-error');
+            const formSuccess = document.getElementById('form-success');
+            const submitBtn = document.getElementById('submit-btn');
+            
+            formError.style.display = 'none';
+            formSuccess.style.display = 'none';
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Adding...';
+            
+            try {
+                const formData = {
+                    name: document.getElementById('dog-name').value,
+                    breed_uuid: document.getElementById('breed-select').value,
+                    birthdate: document.getElementById('birthdate').value || null,
+                    weight: parseFloat(document.getElementById('weight').value) || null,
+                    photo_url: document.getElementById('photo-url').value || null,
+                    is_public: document.getElementById('is-public').checked,
+                    public_comment: document.getElementById('public-comment').value || null
+                };
+                
+                const response = await fetch('http://localhost:5000/api/my-dogs', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    formSuccess.textContent = 'Dog added successfully! Redirecting...';
+                    formSuccess.style.display = 'block';
+                    
+                    setTimeout(() => {
+                        window.location.href = 'my-dogs.html';
+                    }, 1500);
+                } else {
+                    formError.textContent = data.error || 'Error adding dog. Please try again.';
+                    formError.style.display = 'block';
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Add Dog';
+                }
+            } catch (error) {
+                console.error('Error adding dog:', error);
+                formError.textContent = 'Error adding dog. Please try again.';
+                formError.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Add Dog';
+            }
+        });
+
+        // Initialize
+        checkAuth().then(isAuth => {
+            if (isAuth) {
+                loadBreeds();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Dogs - Dog Breed Finder</title>
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-exp.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-icons.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .my-dogs-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .page-header h1 {
+            margin: 0;
+            color: #2d3748;
+        }
+        
+        .dogs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+            margin-top: 30px;
+        }
+        
+        .dog-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: box-shadow 0.2s;
+        }
+        
+        .dog-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .dog-photo {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            background: #f7f8f9;
+        }
+        
+        .dog-info {
+            padding: 20px;
+        }
+        
+        .dog-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin: 0 0 8px 0;
+        }
+        
+        .dog-breed {
+            color: #718096;
+            margin: 0 0 12px 0;
+        }
+        
+        .dog-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 16px;
+            font-size: 0.9rem;
+            color: #4a5568;
+        }
+        
+        .dog-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .visibility-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .visibility-public {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .visibility-private {
+            background: #f8f9fa;
+            color: #6c757d;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #718096;
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            color: #cbd5e0;
+            margin-bottom: 20px;
+        }
+        
+        .empty-state h2 {
+            color: #4a5568;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="header-left">
+                <a href="index.html" class="logo">woof_db</a>
+                <div class="tagline">&nbsp Find Your Perfect Dog Breed</div>
+            </div>
+
+            <!-- Logged Out State -->
+            <div class="header-right" id="auth-logged-out">
+                <a href="#" id="open-login-modal" class="btn btn-link">Sign In</a>
+                <a href="#" id="open-register-modal" class="btn btn-primary">Register</a>
+            </div>
+
+            <!-- Logged In State (hidden by default) -->
+            <div class="header-right" id="auth-logged-in" style="display: none;">
+                <div class="dropdown dropdown-right">
+                    <a href="#" class="btn btn-link dropdown-toggle user-dropdown" tabindex="0">
+                        <figure class="avatar avatar-sm" data-initial="JD" style="background-color: #5755d9;"></figure>
+                        <span class="user-name">John Doe</span>
+                        <i class="icon icon-caret"></i>
+                    </a>
+                    <ul class="menu">
+                        <li class="menu-item">
+                            <a href="my-dogs.html">
+                                <i class="icon icon-people"></i> My Dogs
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li class="menu-item">
+                            <a href="#" id="signout-btn">
+                                <i class="icon icon-shutdown"></i> Sign Out
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="my-dogs-container">
+        <div class="page-header">
+            <h1>My Dogs</h1>
+            <a href="add-dog.html" class="btn btn-primary">
+                <i class="icon icon-plus"></i> Add Dog
+            </a>
+        </div>
+
+        <div id="loading-message" style="text-align: center; padding: 40px; color: #718096;">
+            <div class="loading loading-lg"></div>
+            <p>Loading your dogs...</p>
+        </div>
+
+        <div id="dogs-container" style="display: none;">
+            <!-- Dogs will be populated here -->
+        </div>
+
+        <div id="empty-state" class="empty-state" style="display: none;">
+            <i class="icon icon-people"></i>
+            <h2>No dogs yet</h2>
+            <p>Add your first dog to get started!</p>
+            <a href="add-dog.html" class="btn btn-primary btn-lg" style="margin-top: 20px;">
+                <i class="icon icon-plus"></i> Add Your First Dog
+            </a>
+        </div>
+    </main>
+
+    <!-- Auth Modals -->
+    <div class="modal auth-modal" id="login-modal">
+        <a href="#close" class="modal-overlay" aria-label="Close"></a>
+        <div class="modal-container">
+            <div class="modal-header">
+                <div class="modal-title h5">Sign In</div>
+                <a href="#close" class="btn btn-clear" aria-label="Close"></a>
+            </div>
+            <div class="modal-body">
+                <form id="login-form">
+                    <div class="form-group">
+                        <label class="form-label" for="login-username">Username</label>
+                        <input class="form-input" type="text" id="login-username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="login-password">Password</label>
+                        <input class="form-input" type="password" id="login-password" name="password" required>
+                    </div>
+                    <div id="login-error" class="toast toast-error" style="display:none;"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" form="login-form">Sign In</button>
+                <a href="#close" class="btn">Cancel</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal auth-modal" id="register-modal">
+        <a href="#close" class="modal-overlay" aria-label="Close"></a>
+        <div class="modal-container">
+            <div class="modal-header">
+                <div class="modal-title h5">Create Account</div>
+                <a href="#close" class="btn btn-clear" aria-label="Close"></a>
+            </div>
+            <div class="modal-body">
+                <form id="register-form">
+                    <div class="form-group">
+                        <label class="form-label" for="register-username">Username</label>
+                        <input class="form-input" type="text" id="register-username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="register-email">Email</label>
+                        <input class="form-input" type="email" id="register-email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="register-password">Password</label>
+                        <input class="form-input" type="password" id="register-password" name="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="register-confirm-password">Confirm Password</label>
+                        <input class="form-input" type="password" id="register-confirm-password" name="confirm_password" required>
+                    </div>
+                    <div id="register-error" class="toast toast-error" style="display:none;"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" form="register-form">Create Account</button>
+                <a href="#close" class="btn">Cancel</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        // Check auth on page load
+        async function checkAuth() {
+            const response = await fetch('http://localhost:5000/api/auth/check', {
+                credentials: 'include'
+            });
+            const data = await response.json();
+            
+            if (!data.authenticated) {
+                // Redirect to home if not logged in
+                window.location.href = 'index.html';
+                return false;
+            }
+            return true;
+        }
+
+        async function loadMyDogs() {
+            try {
+                const isAuthenticated = await checkAuth();
+                if (!isAuthenticated) return;
+
+                const response = await fetch('http://localhost:5000/api/my-dogs', {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                
+                document.getElementById('loading-message').style.display = 'none';
+                
+                if (!data.success) {
+                    alert('Error loading dogs: ' + data.error);
+                    return;
+                }
+                
+                if (data.dogs.length === 0) {
+                    document.getElementById('empty-state').style.display = 'block';
+                    return;
+                }
+                
+                displayDogs(data.dogs);
+            } catch (error) {
+                console.error('Error loading dogs:', error);
+                document.getElementById('loading-message').innerHTML = 
+                    '<p style="color: #e74c3c;">Error loading dogs. Please try again.</p>';
+            }
+        }
+
+        function displayDogs(dogs) {
+            const container = document.getElementById('dogs-container');
+            container.style.display = 'block';
+            
+            const grid = document.createElement('div');
+            grid.className = 'dogs-grid';
+            
+            dogs.forEach(dog => {
+                const card = createDogCard(dog);
+                grid.appendChild(card);
+            });
+            
+            container.appendChild(grid);
+        }
+
+        function createDogCard(dog) {
+            const card = document.createElement('div');
+            card.className = 'dog-card';
+            
+            const photoUrl = dog.photo_url || 'https://via.placeholder.com/300x250?text=No+Photo';
+            const visibilityClass = dog.is_public ? 'visibility-public' : 'visibility-private';
+            const visibilityText = dog.is_public ? 'Public' : 'Private';
+            
+            let metaInfo = '';
+            if (dog.birthdate) {
+                const age = calculateAge(dog.birthdate);
+                metaInfo += `<div><strong>Age:</strong> ${age}</div>`;
+            }
+            if (dog.weight) {
+                metaInfo += `<div><strong>Weight:</strong> ${dog.weight} lbs</div>`;
+            }
+            
+            card.innerHTML = `
+                <img src="${photoUrl}" alt="${dog.name}" class="dog-photo">
+                <div class="dog-info">
+                    <h2 class="dog-name">${dog.name}</h2>
+                    <p class="dog-breed">${dog.breed_name}</p>
+                    <span class="visibility-badge ${visibilityClass}">${visibilityText}</span>
+                    <div class="dog-meta">
+                        ${metaInfo}
+                    </div>
+                    <div class="dog-actions">
+                        <a href="edit-dog.html?id=${dog.id}" class="btn btn-sm">Edit</a>
+                        <button class="btn btn-sm btn-error" onclick="deleteDog(${dog.id}, '${dog.name}')">Delete</button>
+                    </div>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        function calculateAge(birthdate) {
+            const birth = new Date(birthdate);
+            const now = new Date();
+            const diffTime = Math.abs(now - birth);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            const years = Math.floor(diffDays / 365);
+            const months = Math.floor((diffDays % 365) / 30);
+            
+            if (years > 0) {
+                return months > 0 ? `${years}y ${months}m` : `${years}y`;
+            } else if (months > 0) {
+                return `${months}m`;
+            } else {
+                return `${diffDays}d`;
+            }
+        }
+
+        async function deleteDog(dogId, dogName) {
+            if (!confirm(`Are you sure you want to delete ${dogName}'s profile?`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`http://localhost:5000/api/my-dogs/${dogId}`, {
+                    method: 'DELETE',
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Reload the page
+                    window.location.reload();
+                } else {
+                    alert('Error deleting dog: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error deleting dog:', error);
+                alert('Error deleting dog. Please try again.');
+            }
+        }
+
+        // Load dogs on page load
+        loadMyDogs();
+    </script>
+</body>
+</html>
