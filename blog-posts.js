@@ -19,7 +19,7 @@ const blogPosts = [
     "id": 2,
     "slug": "irish-setter-personality",
     "title": "The Irish Setter Personality: Understanding Your Redhead's Unique Temperament",
-    "excerpt": "Irish Setters are known for their stunning red coats, but their personalities are equally vibrant. Learn about the four key aspects that make each setter unique, from their joyful nature to their favorite activities.",
+    "excerpt": "Irish Setters exhibit distinct behavioral traits including high energy levels, variable temperament, clear emotional responses, and strong exercise requirements. Understanding these characteristics is essential for potential owners.",
     "featuredImage": "",
     "publishedDate": "2026-05-19",
     "category": "Breeds",
