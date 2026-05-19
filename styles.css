@@ -1017,10 +1017,11 @@ background: #f0f0f0;
 
 /* Community Gallery Styles */
 .community-gallery {
-    margin-top: 60px;
-    padding: 40px 32px;
-    border-top: 2px solid #e2e8f0;
+    margin: 40px 0;
+    padding: 32px;
     background: #fafbfc;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
 }
 
 .community-gallery h2 {

@@ -242,6 +242,21 @@ def load_template():
             <div class="breed-content">
                 {{SUMMARY_SECTION}}
                 
+                <!-- Community Gallery -->
+                <div class="community-gallery" id="community-gallery">
+                    <h2>Meet the {{BREED_NAME}} Community</h2>
+                    <p class="gallery-subtitle">Real {{BREED_NAME}}s from our community members</p>
+                    <div id="community-dogs-grid" class="community-dogs-grid">
+                        <div class="loading-community">
+                            <div class="loading loading-lg"></div>
+                            <p>Loading community dogs...</p>
+                        </div>
+                    </div>
+                    <div class="submit-dog-cta">
+                        <p>Have a {{BREED_NAME}}? <a href="../add-dog.html" class="btn btn-primary">Share Your Dog</a></p>
+                    </div>
+                </div>
+                
                 <div class="breed-info">
                     <div class="info-section">
                         <h2>Size & Physical Traits</h2>
@@ -284,21 +299,6 @@ def load_template():
                     </div>
                     
                     {{BACKGROUND_SECTION}}
-                </div>
-            </div>
-            
-            <!-- Community Gallery -->
-            <div class="community-gallery" id="community-gallery">
-                <h2>Meet the {{BREED_NAME}} Community</h2>
-                <p class="gallery-subtitle">Real {{BREED_NAME}}s from our community members</p>
-                <div id="community-dogs-grid" class="community-dogs-grid">
-                    <div class="loading-community">
-                        <div class="loading loading-lg"></div>
-                        <p>Loading community dogs...</p>
-                    </div>
-                </div>
-                <div class="submit-dog-cta">
-                    <p>Have a {{BREED_NAME}}? <a href="../add-dog.html" class="btn btn-primary">Share Your Dog</a></p>
                 </div>
             </div>
         </div>
@@ -625,10 +625,11 @@ def load_template():
     # Add community gallery CSS to styles
     breed_specific_css = '''
         .community-gallery {
-            margin-top: 60px;
-            padding: 40px 32px;
-            border-top: 2px solid #e2e8f0;
+            margin: 40px 0;
+            padding: 32px;
             background: #fafbfc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
         }
         
         .community-gallery h2 {
