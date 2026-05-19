@@ -10,25 +10,12 @@
     <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-icons.min.css">
     <link rel="stylesheet" href="../styles.css">
     <style>
-        .blog-post-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
-        
-        .breadcrumbs {
-            margin-bottom: 30px;
-            font-size: 14px;
-            color: #666;
-        }
-        
-        .breadcrumbs a {
-            color: #5755d9;
-            text-decoration: none;
-        }
-        
-        .breadcrumbs a:hover {
-            text-decoration: underline;
+        .blog-post-content-wrapper {
+            background: #ffffff;
+            border-radius: 7px;
+            padding: 40px;
+            border: 1px solid #d0d0d0;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
         
         .blog-post-header {
@@ -210,10 +197,57 @@
         </div>
     </nav>
 
-    <div class="blog-post-container">
-        <div class="breadcrumbs">
-            <a href="../index.html">Home</a> → <a href="../blog.html">Blog</a> → The Irish Setter Personality: Understanding Your Redhead's Unique Temperament
-        </div>
+    <div class="main-layout">
+        <aside class="sidebar">
+            <div class="side-nav">
+                <div class="accordion">
+                    <input type="checkbox" id="accordion-0" name="accordion-checkbox" checked>
+                    <label class="accordion-header" for="accordion-0">Recent Posts</label>
+                    <div class="accordion-body">
+                        <div id="recent-posts-sidebar">
+                            <p style="color: #888; font-size: 13px; padding: 8px 0;">Loading...</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion">
+                    <input type="checkbox" id="accordion-1" name="accordion-checkbox" checked>
+                    <label class="accordion-header" for="accordion-1">Categories</label>
+                    <div class="accordion-body">
+                        <div id="categories-sidebar">
+                            <p style="color: #888; font-size: 13px; padding: 8px 0;">Loading...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion">
+                    <input type="checkbox" id="accordion-2" name="accordion-checkbox" checked>
+                    <label class="accordion-header" for="accordion-2">Popular Tags</label>
+                    <div class="accordion-body">
+                        <div id="tags-sidebar" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                            <p style="color: #888; font-size: 13px; padding: 8px 0;">Loading...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="breadcrumb-search-container">
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="../index.html">Home</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="../blog.html">Blog</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="#">The Irish Setter Personality: Understanding Your Redhead's Unique Temperament</a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="blog-post-content-wrapper">
         
         <article class="blog-post">
             <div class="blog-post-header">
@@ -250,6 +284,63 @@
         </article>
         
         <a href="../blog.html" class="back-to-blog">← Back to Blog</a>
+            </div>
+        </main>
     </div>
+    
+    <script src="../blog-posts.js"></script>
+    <script>
+        // Populate sidebar
+        if (typeof blogPosts !== 'undefined') {
+            // Recent Posts
+            const recentPostsContainer = document.getElementById('recent-posts-sidebar');
+            if (blogPosts.length > 0) {
+                const recentPosts = blogPosts.slice(0, 5);
+                recentPostsContainer.innerHTML = recentPosts.map(post => `
+                    <div class="subfamily-item" style="cursor: pointer; padding: 8px 0;" onclick="window.location.href='${post.slug}.html'">
+                        <div class="subfamily-name" style="font-size: 14px; color: #302f79;">${post.title}</div>
+                        <div class="subfamily-desc" style="font-size: 12px;">${post.publishedDate}</div>
+                    </div>
+                `).join('');
+            }
+            
+            // Categories
+            const categoriesContainer = document.getElementById('categories-sidebar');
+            const categoryCount = {};
+            blogPosts.forEach(post => {
+                if (post.category) {
+                    categoryCount[post.category] = (categoryCount[post.category] || 0) + 1;
+                }
+            });
+            
+            if (Object.keys(categoryCount).length > 0) {
+                categoriesContainer.innerHTML = Object.entries(categoryCount)
+                    .sort(([a], [b]) => a.localeCompare(b))
+                    .map(([category, count]) => `
+                        <div class="subfamily-item" style="cursor: pointer; padding: 8px 0;" onclick="window.location.href='../blog.html'">
+                            <div class="subfamily-name">${category}</div>
+                            <div class="subfamily-desc">${count} post${count !== 1 ? 's' : ''}</div>
+                        </div>
+                    `).join('');
+            }
+            
+            // Tags
+            const tagsContainer = document.getElementById('tags-sidebar');
+            const allTags = new Set();
+            blogPosts.forEach(post => {
+                if (post.tags && Array.isArray(post.tags)) {
+                    post.tags.forEach(tag => allTags.add(tag.trim()));
+                }
+            });
+            
+            if (allTags.size > 0) {
+                tagsContainer.innerHTML = Array.from(allTags)
+                    .sort()
+                    .map(tag => `
+                        <span class="chip" style="font-size: 11px; padding: 4px 10px; cursor: pointer;" onclick="window.location.href='../blog.html'">${tag}</span>
+                    `).join('');
+            }
+        }
+    </script>
 </body>
 </html>

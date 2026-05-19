@@ -976,6 +976,17 @@ header {
     height: 8px;
 }
 .breed-list-group{display:none!important;}
+
+/* Global heading styles */
+h2 {
+    font-size: 26px;
+    font-weight: bold;
+}
+
+h3 {
+    font-size: 19px;
+    font-weight: bold;
+}
 .blog-item-category{display:none!important;}
 .blog-item-image{display:none!important;}
 .blog-item-link{color:white!important;text-decoration:none;}
