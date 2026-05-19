@@ -29,54 +29,6 @@
             transform: translateY(-1px);
         }
         
-        .blog-header {
-            margin-bottom: 40px;
-        }
-        
-        .blog-header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 20px;
-        }
-        
-        .blog-header-text h1 {
-            font-size: 36px;
-            color: #302f79;
-            margin-bottom: 10px;
-        }
-        
-        .blog-header-text p {
-            font-size: 16px;
-            color: #666;
-        }
-        
-        .view-toggle {
-            display: flex;
-            gap: 8px;
-        }
-        
-        .view-btn {
-            padding: 8px 16px;
-            border: 1px solid #d0d0d0;
-            background: white;
-            color: #666;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.2s;
-        }
-        
-        .view-btn:hover {
-            background: #f5f5f5;
-        }
-        
-        .view-btn.active {
-            background: #5755d9;
-            color: white;
-            border-color: #5755d9;
-        }
-        
         .blog-list {
             margin-bottom: 40px;
             display: none;
@@ -352,30 +304,33 @@
                 </ul>
             </div>
             
-            <div class="blog-header">
-                <div class="blog-header-content">
-                    <div class="blog-header-text">
-                        <h1>Blog</h1>
-                        <p>Dog care tips, breed guides, training advice, and more</p>
-                    </div>
-                    <div class="view-toggle">
-                        <button class="view-btn" id="list-view-btn" data-view="list">☰ List</button>
-                        <button class="view-btn active" id="gallery-view-btn" data-view="gallery">⊞ Gallery</button>
+            <div class="preview-section show">
+                <div class="preview-header">
+                    <h3>Blog</h3>
+                    <div class="preview-header-right">
+                        <div class="view-toggle">
+                            <button class="view-btn" id="list-view-btn" data-view="list">☰ List</button>
+                            <button class="view-btn active" id="gallery-view-btn" data-view="gallery">⊞ Gallery</button>
+                        </div>
+                        <div class="inline-search">
+                            <input class="form-input" type="text" id="blog-search-input" placeholder="Search blog posts...">
+                            <button class="btn btn-primary" id="blog-search-btn">Search</button>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="blog-list" id="blog-list">
-                <!-- List view posts will be inserted here by JavaScript -->
-            </div>
-            
-            <div class="blog-gallery active" id="blog-gallery">
-                <!-- Gallery view posts will be inserted here by JavaScript -->
-            </div>
-            
-            <div class="no-posts" id="no-posts" style="display: none;">
-                <h2>No posts yet</h2>
-                <p>Check back soon for dog care tips and breed guides!</p>
+                    <div class="blog-list" id="blog-list">
+                    <!-- List view posts will be inserted here by JavaScript -->
+                </div>
+                
+                <div class="blog-gallery active" id="blog-gallery">
+                    <!-- Gallery view posts will be inserted here by JavaScript -->
+                </div>
+                
+                <div class="no-posts" id="no-posts" style="display: none;">
+                    <h2>No posts yet</h2>
+                    <p>Check back soon for dog care tips and breed guides!</p>
+                </div>
             </div>
         </main>
     </div>
@@ -544,6 +499,116 @@
                         <span class="chip" style="font-size: 11px; padding: 4px 10px; cursor: pointer;">${tag}</span>
                     `).join('');
             }
+        }
+        
+        // Search functionality
+        const blogSearchInput = document.getElementById('blog-search-input');
+        const blogSearchBtn = document.getElementById('blog-search-btn');
+        let allBlogPosts = [...blogPosts]; // Store original posts
+        let filteredPosts = [...blogPosts];
+        
+        function renderBlogPosts(posts) {
+            // Clear existing posts
+            blogList.innerHTML = '';
+            blogGallery.innerHTML = '';
+            
+            if (posts.length === 0) {
+                blogList.innerHTML = '<p style="text-align: center; padding: 40px; color: #666;">No posts found matching your search.</p>';
+                blogGallery.innerHTML = '<p style="text-align: center; padding: 40px; color: #666; grid-column: 1/-1;">No posts found matching your search.</p>';
+                return;
+            }
+            
+            posts.forEach(post => {
+                const item = document.createElement('div');
+                item.className = 'blog-item';
+                
+                const imageHtml = post.featuredImage 
+                    ? `<img src="${post.featuredImage}" alt="${post.title}" class="blog-item-image">`
+                    : '<div class="blog-item-image" style="background: linear-gradient(135deg, #5755d9 0%, #302f79 100%);"></div>';
+                
+                const categoryHtml = post.category 
+                    ? `<span class="blog-item-category">${post.category}</span>`
+                    : '';
+                
+                const likes = Math.floor(Math.random() * 50) + 5;
+                const shares = Math.floor(Math.random() * 20) + 2;
+                
+                item.innerHTML = `
+                    ${imageHtml}
+                    <div class="blog-item-content">
+                        ${categoryHtml}
+                        <h2 class="blog-item-title">
+                            <a href="blog/${post.slug}.html">${post.title}</a>
+                        </h2>
+                        <div class="blog-item-excerpt">${post.excerpt || ''}</div>
+                        <div class="blog-item-meta">
+                            <span class="blog-item-meta-item">📅 ${post.publishedDate}</span>
+                            <span class="blog-item-meta-item">❤ ${likes} likes</span>
+                            <span class="blog-item-meta-item">↗ ${shares} shares</span>
+                        </div>
+                    </div>
+                    <div class="blog-item-actions">
+                        <a href="blog/${post.slug}.html" class="blog-item-link">Read Article</a>
+                    </div>
+                `;
+                
+                blogList.appendChild(item);
+                
+                const galleryCard = document.createElement('div');
+                galleryCard.className = 'blog-gallery-card';
+                galleryCard.onclick = () => window.location.href = `blog/${post.slug}.html`;
+                
+                const galleryImageHtml = post.featuredImage 
+                    ? `<img src="${post.featuredImage}" alt="${post.title}" class="blog-gallery-image">`
+                    : '<div class="blog-gallery-image"></div>';
+                
+                const galleryCategoryHtml = post.category 
+                    ? `<span class="blog-gallery-category">${post.category}</span>`
+                    : '';
+                
+                galleryCard.innerHTML = `
+                    ${galleryImageHtml}
+                    <div class="blog-gallery-content">
+                        ${galleryCategoryHtml}
+                        <div class="blog-gallery-title">${post.title}</div>
+                        <div class="blog-gallery-excerpt">${post.excerpt || ''}</div>
+                        <div class="blog-gallery-meta">
+                            <span class="blog-gallery-date">📅 ${post.publishedDate}</span>
+                            <div class="blog-gallery-stats">
+                                <span>❤ ${likes}</span>
+                                <span>↗ ${shares}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                blogGallery.appendChild(galleryCard);
+            });
+        }
+        
+        function searchBlogPosts() {
+            const searchTerm = blogSearchInput.value.toLowerCase().trim();
+            
+            if (!searchTerm) {
+                filteredPosts = [...allBlogPosts];
+            } else {
+                filteredPosts = allBlogPosts.filter(post => {
+                    return post.title.toLowerCase().includes(searchTerm) ||
+                           (post.excerpt && post.excerpt.toLowerCase().includes(searchTerm)) ||
+                           (post.category && post.category.toLowerCase().includes(searchTerm)) ||
+                           (post.tags && post.tags.toLowerCase().includes(searchTerm));
+                });
+            }
+            
+            renderBlogPosts(filteredPosts);
+        }
+        
+        if (blogSearchInput) {
+            blogSearchInput.addEventListener('input', searchBlogPosts);
+        }
+        
+        if (blogSearchBtn) {
+            blogSearchBtn.addEventListener('click', searchBlogPosts);
         }
     </script>
 </body>
