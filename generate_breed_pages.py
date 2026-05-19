@@ -626,14 +626,16 @@ def load_template():
     breed_specific_css = '''
         .community-gallery {
             margin-top: 60px;
-            padding-top: 40px;
+            padding: 40px 32px;
             border-top: 2px solid #e2e8f0;
+            background: #fafbfc;
         }
         
         .community-gallery h2 {
             text-align: center;
             color: #2d3748;
             margin-bottom: 8px;
+            font-size: 1.75rem;
         }
         
         .gallery-subtitle {
