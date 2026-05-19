@@ -261,7 +261,7 @@ function renderPage() {
                     </div>
                 </div>
                 <div class="breed-list-actions">
-                    <a href="${petfinderUrl}" class="breed-list-link" target="_blank" onclick="event.stopPropagation()">Find Adoption</a>
+                    <span class="breed-list-link" onclick="event.preventDefault(); event.stopPropagation(); window.open('${petfinderUrl}', '_blank');">Find Adoption</span>
                 </div>
             </a>`;
         }).join('');

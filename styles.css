@@ -433,6 +433,7 @@ header {
     font-size: 14px;
     font-weight: 500;
     transition: background 0.2s;
+    cursor: pointer;
 }
 .breed-list-link:hover {
     background: #302f79;
